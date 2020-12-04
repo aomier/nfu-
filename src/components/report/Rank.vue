@@ -13,6 +13,12 @@ export default {
       chartInstance: null,
       // 从服务器中获取的所有数据
       allData: null,
+      // 柱形图 区域缩放起点值
+      startValue: 0,
+      // 柱形图结 区域缩放终点值
+      endValue: 9,
+      // 定时器
+      timerId: null,
     }
   },
   mounted() {
@@ -24,11 +30,13 @@ export default {
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
+    clearInterval(this.timerId)
   },
   methods: {
     // 初始化图表的方法
     initChart() {
       this.chartInstance = this.$echarts.init(this.$refs.rankRef, 'chalk')
+
       const initOption = {
         title: {
           text: '▎地区销售排行',
@@ -55,10 +63,27 @@ export default {
         series: [
           {
             type: 'bar',
+            label: {
+              show: true,
+              position: 'top',
+              color: 'white',
+              rotate: 30,
+            },
           },
         ],
       }
       this.chartInstance.setOption(initOption)
+
+      // 鼠标经过关闭 动画效果
+      this.chartInstance.on('mouseover', () => {
+        clearInterval(this.timerId)
+        console.log('关闭')
+      })
+      // 鼠标离开 开启动画效果
+      this.chartInstance.on('mouseout', () => {
+        console.log('开启')
+        this.startInterval()
+      })
     },
     // 发送请求，获取数据
     async getData() {
@@ -69,6 +94,8 @@ export default {
 
       console.log(this.allData)
       this.updateChart()
+      // 开始自动切换
+      this.startInterval()
     },
     // 更新图表配置项
     updateChart() {
@@ -92,13 +119,18 @@ export default {
         xAxis: {
           data: provinceInfo,
         },
+        dataZoom: {
+          // 区域缩放组件
+          show: false,
+          startValue: this.startValue,
+          endValue: this.endValue,
+        },
         series: [
           {
             data: valueArr,
             itemStyle: {
               color: arg => {
                 let targetColorArr = null
-                console.log(arg)
 
                 if (arg.value > 300) {
                   targetColorArr = colorArr[0]
@@ -121,11 +153,42 @@ export default {
       }
       this.chartInstance.setOption(dataOption)
     },
-    // 不同分辨率的响应式
+    // 根据图标容器的宽度 计算各属性、标签、元素的大小
     screenAdapter() {
-      const adapterOption = {}
+      const titleFontSzie = (this.$refs.rankRef.offsetWidth / 100) * 3.6
+
+      const adapterOption = {
+        title: {
+          textStyle: {
+            fontSize: titleFontSzie,
+          },
+        },
+        series: [
+          {
+            barWidth: titleFontSzie,
+            itemStyle: {
+              barBorderRadius: [titleFontSzie / 2, titleFontSzie / 2, 0, 0],
+            },
+          },
+        ],
+      }
       this.chartInstance.setOption(adapterOption)
       this.chartInstance.resize()
+    },
+    // 改变柱形图 区域缩放起始与终点值的函数
+    startInterval() {
+      // 如果存在则关闭
+      this.timerId && clearInterval(this.timerId)
+
+      this.timerId = setInterval(() => {
+        this.startValue++
+        this.endValue++
+        if (this.endValue > this.allData.length - 1) {
+          this.startValue = 0
+          this.endValue = 9
+        }
+        this.updateChart()
+      }, 2000)
     },
   },
 }
