@@ -1,17 +1,16 @@
 <template>
   <div class="com-page">
-    <single-map></single-map>
+    <rank></rank>
   </div>
 </template>
 
 <script>
-import Map from "components/report/Map"
+import Rank from "components/report/Rank"
 
 export default {
-  // 商家地图分布图表
-  name: 'MapPage',
+  name: 'RankPage',
   components:{
-    'single-map':Map,
+    Rank
   }
 }
 </script>

@@ -9,7 +9,7 @@ export default {
   name: "Trend",
   data() {
     return {
-      // 图标的实例对象
+      // 图表的实例对象
       chartInstance: null,
       // 从服务器中获取的所有数据
       allData: null,
@@ -34,7 +34,7 @@ export default {
     },
     // 发送请求，获取数据
     async getData() {
-      // http://127.0.0.1:8888/api/trend
+      // this.$http.get()
       // 对 addData赋值
       this.updateChart()
     },

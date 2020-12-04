@@ -25,7 +25,7 @@ export default {
   name: 'Trend',
   data() {
     return {
-      // 图标的实例对象
+      // 图表的实例对象
       chartInstance: null,
       // 从服务器中获取的所有数据
       allData: null,
