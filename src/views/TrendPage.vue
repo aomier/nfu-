@@ -1,16 +1,17 @@
 <template>
   <div class="com-page">
-    <seller></seller>
+    <trend></trend>
   </div>
 </template>
 
 <script>
-import Seller from "components/report/Seller";
+import Trend from "components/report/Trend";
+
 export default {
-  // Seller 商家销量
-  name: "SellerPage",
+  // trend 销量趋势
+  name: "TrendPage",
   components: {
-    seller: Seller,
+    Trend,
   },
 };
 </script>

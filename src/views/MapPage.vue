@@ -1,19 +1,24 @@
 <template>
   <div class="com-page">
-    <seller></seller>
+    666
+    <map></map>
   </div>
 </template>
 
 <script>
+import Map from "components/report/Map"
 import Seller from "components/report/Seller";
+
 export default {
-  // Seller 商家销量
-  name: "SellerPage",
-  components: {
+  // 商家分布
+  name: 'MapPage',
+  components:{
+    Map,
     seller: Seller,
-  },
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>
+
 </style>
