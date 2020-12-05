@@ -5,13 +5,7 @@
       <span>{{ showTitle }}</span>
       <span class="iconfont title-icon" :style="comStyle">&#xe6eb;</span>
       <div class="select-con">
-        <div
-          class="select-item"
-          v-show="showMenu"
-          @click.prevent="handleSelect(item.key)"
-          v-for="item in selectTypes"
-          :key="item.key"
-        >
+        <div class="select-item" v-show="showMenu" @click.prevent="handleSelect(item.key)" v-for="item in selectTypes" :key="item.key">
           {{ item.text }}
         </div>
       </div>
@@ -60,15 +54,28 @@ export default {
       value: '',
     }
   },
+  created() {
+    // 在组件创建完成之后，进行回调函数的注册
+    this.$socket.registerCallBack('trendData', this.getData())
+  },
   mounted() {
     this.initChart()
-    this.getData()
+    // this.getData() // websocket
+    // 请求数据
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'trendData',
+      chartName: 'trend',
+      value: '',
+    })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
+    // 销毁注册的事件
+    this.$socket.unRegisterCallBack('trendData')
   },
   computed: {
     // 点击过后需要显示的数组
@@ -124,12 +131,10 @@ export default {
       }
       this.chartInstance.setOption(initOption)
     },
-    // 发送请求，获取数据
-    async getData() {
-      // http://127.0.0.1:8888/api/trend
-      const { data: res } = await this.$http.get('http://127.0.0.1:8888/api/trend')
-      console.log('res: ', res)
-      // 对 addData赋值
+    // 发送请求，获取数据  //websocket： realData 服务端发送给客户端需要的数据
+    async getData(res) {
+      // const { data: res } = await this.$http.get('http://127.0.0.1:8888/api/trend')
+
       this.allData = res
       console.log('this.allData: ', this.allData)
 
@@ -138,21 +143,9 @@ export default {
     // 更新图表配置项
     updateChart() {
       // 半透明的颜色值
-      const colorArr1 = [
-        'rgba(11, 168, 44, 0.5)',
-        'rgba(44, 110, 255, 0.5)',
-        'rgba(22, 242, 217, 0.5)',
-        'rgba(254, 33, 30, 0.5)',
-        'rgba(250, 105, 0, 0.5)',
-      ]
+      const colorArr1 = ['rgba(11, 168, 44, 0.5)', 'rgba(44, 110, 255, 0.5)', 'rgba(22, 242, 217, 0.5)', 'rgba(254, 33, 30, 0.5)', 'rgba(250, 105, 0, 0.5)']
       // 全透明的颜色值
-      const colorArr2 = [
-        'rgba(11, 168, 44, 0)',
-        'rgba(44, 110, 255, 0)',
-        'rgba(22, 242, 217, 0)',
-        'rgba(254, 33, 30, 0)',
-        'rgba(250, 105, 0, 0)',
-      ]
+      const colorArr2 = ['rgba(11, 168, 44, 0)', 'rgba(44, 110, 255, 0)', 'rgba(22, 242, 217, 0)', 'rgba(254, 33, 30, 0)', 'rgba(250, 105, 0, 0)']
 
       // x轴数据
       const month = this.allData.common.month
@@ -242,6 +235,5 @@ export default {
   .title-icon {
     margin-left: 10px;
   }
-
 }
 </style>
