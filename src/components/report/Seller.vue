@@ -6,6 +6,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getThemeValue } from 'utils/theme_utils'
 
 export default {
   // 商家销售统计
@@ -22,6 +23,8 @@ export default {
       totalPage: 0,
       // 定时器标识
       timerId: null,
+      // 当鼠标移入axis(坐标轴)时展示 底层的背景色
+      PointerColor: this.axisPointerColor,
     }
   },
   created() {
@@ -29,6 +32,9 @@ export default {
   },
   computed: {
     ...mapState(['theme']),
+    axisPointerColor() {
+      return getThemeValue(this.theme).sellerAxisPointerColor
+    },
   },
   watch: {
     theme() {
@@ -90,13 +96,13 @@ export default {
           type: 'category',
         },
         tooltip: {
-          // 当鼠标移入axis(坐标轴)时展示
+          // 当鼠标移入axis(坐标轴)时展示 底层的背景色
           trigger: 'axis',
           axisPointer: {
             // 展示的类型是线条类型
             type: 'line',
             lineStyle: {
-              color: '#2D3443',
+              color: this.axisPointerColor,
             },
             // 相等于 z-index 将层级调低
             z: 0,

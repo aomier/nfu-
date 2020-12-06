@@ -176,7 +176,7 @@ export default {
           bottom: '5%',
           // 图例的方向
           orient: 'verticle',
-          data: legendArr,
+          data: legendArr.reverse(),
         },
         series: seriesArr,
       }

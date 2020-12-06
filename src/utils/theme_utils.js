@@ -7,13 +7,16 @@ const theme = {
     // 切换主题按钮的图片路径
     themeSrc:'qiehuan_dark.png',
     // 头部的线条
-    headerBorderSrc:'header_border_dark.png'
+    headerBorderSrc:'header_border_dark.png',
+    sellerAxisPointerColor:'#2D3443'
+
   },
   vintage: {
     backgroundColor: '#FFFFFF',
     titleColor: "#000000",
     themeSrc:'qiehuan_light.png',
-    headerBorderSrc:'header_border_light.png'
+    headerBorderSrc:'header_border_light.png',
+    sellerAxisPointerColor:'#f1f2f6'
   }
 }
 

@@ -8,7 +8,7 @@
       <span class="title">电商平台实时监控系统</span>
       <div class="title-right">
         <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="" />
-        <div class="datetime">2020-12-12 15:30:45</div>
+        <div class="datetime">{{ systemDateTime }}</div>
       </div>
     </header>
     <div class="screen-body">
@@ -87,17 +87,37 @@ export default {
     Stock,
     Trend,
   },
+  data() {
+    return {
+      // 各组件是否全屏状态
+      fullScreenStatus: {
+        trend: false,
+        seller: false,
+        map: false,
+        rank: false,
+        hot: false,
+        stock: false,
+      },
+      // 当前的系统时间
+      systemDateTime: null,
+      // 用于保存当前系统日期的定时器id
+      timerID: null,
+    }
+  },
   created() {
     // 注册服务端广播的全屏事件
     this.$socket.registerCallBack('fullScreen', this.recvData)
     // 注册服务器广播的主题切换事件
     this.$socket.registerCallBack('themeChange', this.recvThemeChange)
+    this.currentTime()
   },
   computed: {
     ...mapState(['theme']),
+    // 头部的边框路径
     headerSrc() {
       return '/static/img/' + getThemeValue(this.theme).headerBorderSrc
     },
+    // 主题图片的路径
     themeSrc() {
       return '/static/img/' + getThemeValue(this.theme).themeSrc
     },
@@ -112,19 +132,7 @@ export default {
     // 组件销毁时，销毁事件
     this.$socket.unRegisterCallBack('fullScreen')
     this.$socket.unRegisterCallBack('themeChange')
-  },
-  data() {
-    return {
-      // 各组件是否全屏状态
-      fullScreenStatus: {
-        trend: false,
-        seller: false,
-        map: false,
-        rank: false,
-        hot: false,
-        stock: false,
-      },
-    }
+    clearInterval(this.timerID)
   },
   methods: {
     // 监听全屏事件
@@ -175,6 +183,15 @@ export default {
     recvThemeChange() {
       this.$store.commit('changeTheme')
     },
+    currentTime() {
+      this.systemDateTime = new Date().toLocaleString()
+
+      this.timerID && clearInterval(this.timerID)
+
+      this.timerID = setInterval(() => {
+        this.systemDateTime = new Date().toLocaleString()
+      }, 1000)
+    }
   },
 }
 </script>

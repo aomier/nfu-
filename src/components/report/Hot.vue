@@ -10,6 +10,7 @@
 <script>
 import { mapState } from 'vuex'
 import { getThemeValue } from 'utils/theme_utils'
+import _ from "lodash"
 
 export default {
   name: 'Hot',
@@ -106,7 +107,7 @@ export default {
             let showStr = ''
             thirdCategory.forEach(item => {
               showStr += `
-                ${item.name}：${this.floatNumber((item.value / total) * 100, 3)}% <br/>
+                ${item.name}：${_.round(item.value / total * 100,2)}% <br/>
               `
             })
             return showStr
@@ -205,17 +206,7 @@ export default {
       // 已到达最右边
       if (this.currentIndex > this.allData.length - 1) this.currentIndex = 0
       this.updateChart()
-    },
-    // 保留小数位数
-    // retain 保持、保留
-    floatNumber(number, retain) {
-      if (!number) return ''
-      let str = number.toString()
-      let index = str.indexOf('.')
-      if (index === -1) return number
-
-      return str.slice(0, index + retain + 1)
-    },
+    }
   },
 }
 </script>
