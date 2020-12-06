@@ -1,4 +1,3 @@
-// 商家销量统计的横向柱状图
 <template>
   <div class="com-container">
     <div class="com-chart" ref="sellerRef"></div>
@@ -6,8 +5,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-  name: "Seller",
+  // 商家销售统计
+  name: 'Seller',
   data() {
     return {
       // echarts 实例对象
@@ -20,55 +22,81 @@ export default {
       totalPage: 0,
       // 定时器标识
       timerId: null,
-    };
+    }
+  },
+  created() {
+    this.$socket.registerCallBack('sellerData', this.getData)
+  },
+  computed: {
+    ...mapState(['theme']),
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
+    },
   },
   mounted() {
     // 由于初始化 使用到了DOM元素，因此需要在 mounted生命周期内调用
-    this.initChart();
-    this.getData();
+    this.initChart()
+    // this.getData();
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'sellerData',
+      chartName: 'seller',
+      value: '',
+    })
     // 在界面加载完成时，主动对屏幕进行适配
     this.screenAdapter()
-    window.addEventListener("resize", this.screenAdapter);
+    window.addEventListener('resize', this.screenAdapter)
   },
   // 实例销毁后触发
   destroyed() {
-    clearInterval(this.timeID);
+    clearInterval(this.timeID)
     // 在组件销毁的时候，把监听器取消掉
-    window.removeEventListener('resize',this.screenAdapter)
+    window.removeEventListener('resize', this.screenAdapter)
+    this.$socket.unRegisterCallBack('sellerData')
   },
   methods: {
     // 初始化 echartsInstance 对象
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.sellerRef, "chalk");
+      this.chartInstance = this.$echarts.init(this.$refs.sellerRef, this.theme)
       // 对图表初始化的配置
       const initOption = {
         title: {
-          text: "▎商家销售统计",
+          text: '▎商家销售统计',
           left: 20,
           top: 20,
         },
         grid: {
-          top: "20%",
-          left: "3%",
-          right: "6%",
-          bottom: "3%",
+          top: '20%',
+          left: '3%',
+          right: '6%',
+          bottom: '3%',
           // 默认grid不包含坐标轴文字，改为true
           containLabel: true,
         },
         xAxis: {
-          type: "value",
+          type: 'value',
         },
         yAxis: {
-          type: "category",
+          type: 'category',
         },
         tooltip: {
           // 当鼠标移入axis(坐标轴)时展示
-          trigger: "axis",
+          trigger: 'axis',
           axisPointer: {
             // 展示的类型是线条类型
-            type: "line",
+            type: 'line',
             lineStyle: {
-              color: "#2D3443",
+              color: '#2D3443',
             },
             // 相等于 z-index 将层级调低
             z: 0,
@@ -76,12 +104,12 @@ export default {
         },
         series: [
           {
-            type: "bar",
+            type: 'bar',
             label: {
               show: true,
-              position: "right",
+              position: 'right',
               textStyle: {
-                color: "white",
+                color: 'white',
               },
             },
             // 每一个柱的样式
@@ -90,54 +118,54 @@ export default {
               // 指明方向(第四象限坐标轴),不同百分比之下颜色的值
               color: new this.$echarts.graphic.LinearGradient(0, 0, 1, 0, [
                 // 0% 状态时的颜色
-                { offset: 0, color: "#5052EE" },
+                { offset: 0, color: '#5052EE' },
                 // 100% 的颜色
-                { offset: 1, color: "#AB6EE5" },
+                { offset: 1, color: '#AB6EE5' },
               ]),
             },
           },
         ],
-      };
+      }
 
-      this.chartInstance.setOption(initOption);
+      this.chartInstance.setOption(initOption)
 
       // 对图表进行鼠标事件的监听
-      this.chartInstance.on("mouseover", () => {
-        this.timerId && clearInterval(this.timerId);
-      });
-      this.chartInstance.on("mouseout", () => {
-        this.startInterval();
-      });
+      this.chartInstance.on('mouseover', () => {
+        this.timerId && clearInterval(this.timerId)
+      })
+      this.chartInstance.on('mouseout', () => {
+        this.startInterval()
+      })
     },
     // 获取服务器数据
-    async getData() {
+    getData(res) {
       // http://127.0.0.1:8888/api/seller
-      const { data: res } = await this.$http.get("seller");
-      console.log("res: ", res);
+      // const { data: res } = await this.$http.get('seller')
+      // console.log('res: ', res)
 
-      this.allData = res;
+      this.allData = res
       // 对数组排序 从小到大进行排序
-      this.allData.sort((a, b) => b.value - a.value);
+      this.allData.sort((a, b) => b.value - a.value)
       // 每五个元素显示一页 计算出总页数
-      this.totalPage = Math.ceil(this.allData.length / 5);
+      this.totalPage = Math.ceil(this.allData.length / 5)
 
       // 开始第一次渲染
-      this.updateChart();
+      this.updateChart()
       // 开启定时器 开始动态渲染
-      this.startInterval();
+      this.startInterval()
     },
     // 更新图表
     updateChart() {
       // 动态从数组中取出5条数据
-      const start = (this.curretnPage - 1) * 5;
-      const end = this.curretnPage * 5;
-      const showData = this.allData.slice(start, end);
-      console.log("showData: ", showData);
+      const start = (this.curretnPage - 1) * 5
+      const end = this.curretnPage * 5
+      const showData = this.allData.slice(start, end)
+      console.log('showData: ', showData)
 
       // y轴上的数据
-      const sellerNames = showData.map((item) => item.name);
+      const sellerNames = showData.map(item => item.name)
       // x 轴上的数据
-      const sellerValues = showData.map((item) => item.value);
+      const sellerValues = showData.map(item => item.value)
 
       // 当拿到数据后，准备数据的配置项
       const dataOption = {
@@ -149,27 +177,27 @@ export default {
             data: sellerValues,
           },
         ],
-      };
+      }
 
       // 设置数据
-      this.chartInstance.setOption(dataOption);
+      this.chartInstance.setOption(dataOption)
     },
     // 开启动态渲染的定时器
     startInterval() {
       // 一般使用定时器都有一个保险操作,先关闭再开启
-      this.timerId && clearInterval(this.timerId);
+      this.timerId && clearInterval(this.timerId)
 
       this.timerId = setInterval(() => {
-        this.curretnPage++;
+        this.curretnPage++
         // 当超出最大页数时,回滚到第一页
-        if (this.curretnPage > this.totalPage) this.curretnPage = 1;
+        if (this.curretnPage > this.totalPage) this.curretnPage = 1
 
-        this.updateChart();
-      }, 3000);
+        this.updateChart()
+      }, 3000)
     },
     // 当浏览器窗口大小发生变化，完成屏幕适配
     screenAdapter() {
-      const titleFontSize = (this.$refs.sellerRef.offsetWidth / 100) * 3.6;
+      const titleFontSize = (this.$refs.sellerRef.offsetWidth / 100) * 3.6
       // 浏览器分辨率大小相关的配置项
       const adapterOption = {
         title: {
@@ -192,13 +220,13 @@ export default {
             },
           },
         ],
-      };
-      this.chartInstance.setOption(adapterOption);
+      }
+      this.chartInstance.setOption(adapterOption)
       // 手动调用图表的 resize 才能产生效果
       this.chartInstance.resize()
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'Rank',
   data() {
@@ -21,9 +23,34 @@ export default {
       timerId: null,
     }
   },
+  created() {
+    this.$socket.registerCallBack('rankData', this.getData)
+  },
+  computed: {
+    ...mapState(['theme']),
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
+    },
+  },
   mounted() {
     this.initChart()
-    this.getData()
+    // this.getData()
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'rankData',
+      chartName: 'rank',
+      value: '',
+    })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
@@ -31,11 +58,12 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
     clearInterval(this.timerId)
+    this.$socket.unRegisterCallBack('rankData')
   },
   methods: {
     // 初始化图表的方法
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.rankRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.rankRef, this.theme)
 
       const initOption = {
         title: {
@@ -77,17 +105,16 @@ export default {
       // 鼠标经过关闭 动画效果
       this.chartInstance.on('mouseover', () => {
         clearInterval(this.timerId)
-        console.log('关闭')
       })
       // 鼠标离开 开启动画效果
       this.chartInstance.on('mouseout', () => {
-        console.log('开启')
         this.startInterval()
       })
     },
     // 发送请求，获取数据
-    async getData() {
-      const { data: res } = await this.$http.get('/rank')
+    async getData(res) {
+      // const { data: res } = await this.$http.get('/rank')
+      console.log('res: ', res)
       this.allData = res
       // 对数据进行排序(大到小)
       this.allData.sort((a, b) => b.value - a.value)

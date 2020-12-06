@@ -5,7 +5,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
+  // 库存和销量分析
   name: 'Stock',
   data() {
     return {
@@ -35,9 +38,34 @@ export default {
       ],
     }
   },
+  created() {
+    this.$socket.registerCallBack('stockData', this.getData)
+  },
+  computed: {
+    ...mapState(['theme']),
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
+    },
+  },
   mounted() {
     this.initChart()
-    this.getData()
+    // this.getData()
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'stockData',
+      chartName: 'stock',
+      value: '',
+    })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
@@ -45,11 +73,12 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
     clearInterval(this.timerId)
+    this.$socket.unRegisterCallBack('stockData')
   },
   methods: {
     // 初始化图表的方法
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.stockRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.stockRef, this.theme)
       const initOption = {
         title: {
           text: '▎库存和销量分析',
@@ -65,11 +94,10 @@ export default {
       this.chartInstance.on('mouseout', this.startInterval)
     },
     // 发送请求，获取数据
-    async getData() {
-      const { data: res } = await this.$http.get('/stock')
+    getData(res) {
+      // const { data: res } = await this.$http.get('/stock')
       this.allData = res
 
-      console.log(this.allData)
       this.updateChart()
     },
     // 更新图表配置项
@@ -100,7 +128,7 @@ export default {
           data: [
             // 销量
             {
-              name: item.name + '\n' + item.sales,
+              name: item.name + '\n\n' + item.sales,
               value: item.sales,
               itemStyle: {
                 // 创建线性渐变的颜色 从下往上
@@ -148,7 +176,7 @@ export default {
       const titleFontSize = (this.$refs.stockRef.offsetWidth / 100) * 3.6
       console.log('titleFontSize: ', titleFontSize)
       // 圆的内院半径和 外圆半径
-      const innerRadius = titleFontSize * 2
+      const innerRadius = titleFontSize * 2.8
       const outerRadius = innerRadius * 1.125
       console.log('outerRadius: ', outerRadius)
 
@@ -163,35 +191,35 @@ export default {
             type: 'pie',
             radius: [outerRadius, innerRadius],
             label: {
-              fontSize: titleFontSize / 2,
+              fontSize: titleFontSize / 1.2,
             },
           },
           {
             type: 'pie',
             radius: [outerRadius, innerRadius],
             label: {
-              fontSize: titleFontSize / 2,
+              fontSize: titleFontSize / 1.2,
             },
           },
           {
             type: 'pie',
             radius: [outerRadius, innerRadius],
             label: {
-              fontSize: titleFontSize / 2,
+              fontSize: titleFontSize / 1.2,
             },
           },
           {
             type: 'pie',
             radius: [outerRadius, innerRadius],
             label: {
-              fontSize: titleFontSize / 2,
+              fontSize: titleFontSize / 1.2,
             },
           },
           {
             type: 'pie',
             radius: [outerRadius, innerRadius],
             label: {
-              fontSize: titleFontSize / 2,
+              fontSize: titleFontSize / 1.2,
             },
           },
         ],

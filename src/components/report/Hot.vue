@@ -1,15 +1,18 @@
 <template>
   <div class="com-container">
     <div class="com-chart" ref="hotRef"></div>
-    <i class="el-icon-arrow-left icon-left" @click="toLeft" :style="{ fontSize: FontSize + 'px' }"></i>
-    <i class="el-icon-arrow-right icon-right" @click="toRight" :style="{ fontSize: FontSize + 'px' }"></i>
-    <span class="cate-name" :style="{ fontSize: FontSize / 1.5 + 'px' }">{{ cateName }}</span>
+    <i class="el-icon-arrow-left icon-left" @click="toLeft" :style="themeStyle"></i>
+    <i class="el-icon-arrow-right icon-right" @click="toRight" :style="themeStyle"></i>
+    <span class="cate-name" :style="themeStyle">{{ cateName }}</span>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { getThemeValue } from 'utils/theme_utils'
+
 export default {
-  name: 'Trend',
+  name: 'Hot',
   data() {
     return {
       // 图表的实例对象
@@ -22,30 +25,59 @@ export default {
       titleFontSize: null,
     }
   },
+  created() {
+    this.$socket.registerCallBack('hotData', this.getData)
+  },
   computed: {
+    ...mapState(['theme']),
     cateName() {
       if (!this.allData) return ''
       return this.allData[this.currentIndex].name
     },
-    FontSize() {
-      if (!this.titleFontSize) return ''
-      return this.titleFontSize
+    themeStyle() {
+      if (!this.titleFontSize) {
+        return { color: getThemeValue(this.theme) }
+      }
+      return {
+        fontSize: this.titleFontSize + 'px',
+        color: getThemeValue(this.theme).titleColor
+      }
+    },
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
     },
   },
   mounted() {
     this.initChart()
-    this.getData()
+    // this.getData()
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'hotData',
+      chartName: 'hotproduct',
+      value: '',
+    })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
+    this.$socket.unRegisterCallBack('hotData')
   },
   methods: {
     // 初始化图表的方法
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.hotRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.hotRef, this.theme)
 
       const initOption = {
         title: {
@@ -54,7 +86,7 @@ export default {
           top: 20,
         },
         legend: {
-          top: '12%',
+          top: '15%',
           // 图标类型 圆形
           icon: 'circle',
         },
@@ -99,10 +131,8 @@ export default {
       this.chartInstance.setOption(initOption)
     },
     // 发送请求，获取数据
-    async getData() {
-      // this.$http.get()
-      // 对 addData赋值
-      const { data: res } = await this.$http.get('/hotproduct')
+    getData(res) {
+      // const { data: res } = await this.$http.get('/hotproduct')
       this.allData = res
       console.log(this.allData)
       this.updateChart()
@@ -138,16 +168,16 @@ export default {
       const adapterOption = {
         title: {
           textStyle: {
-            fontSize: this.titleFontSize / 1.2,
+            fontSize: this.titleFontSize,
           },
         },
         legend: {
-          itemWidth: this.titleFontSize / 2,
-          itemHeight: this.titleFontSize / 2,
+          itemWidth: this.titleFontSize,
+          itemHeight: this.titleFontSize,
           // 图例的间隔
           itemGap: this.titleFontSize / 2,
           textStyle: {
-            fontSize: this.titleFontSize / 2,
+            fontSize: this.titleFontSize / 1.2,
           },
         },
         series: [
@@ -196,7 +226,6 @@ export default {
     z-index: 999;
     position: absolute;
     transform: translateY(-50%);
-    color: white;
     top: 50%;
     cursor: pointer;
   }
@@ -211,7 +240,6 @@ export default {
     right: 10%;
     bottom: 20px;
     z-index: 999;
-    color: white;
   }
 }
 </style>

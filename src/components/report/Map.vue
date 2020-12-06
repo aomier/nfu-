@@ -7,6 +7,8 @@
 <script>
 import axios from 'axios'
 import { getProvinceMapInfo } from '@/utils/map_utils'
+import { mapState } from 'vuex'
+
 export default {
   name: 'Map',
   data() {
@@ -21,25 +23,49 @@ export default {
       cityMapData: {},
     }
   },
+  computed: {
+    ...mapState(['theme']),
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
+    },
+  },
   created() {
     this.axiosInstance = axios.create({
       baseURL: 'http://localhost:8999/',
     })
+    this.$socket.registerCallBack('mapData', this.getData)
   },
   mounted() {
     this.initChart()
-    this.getData()
+    // this.getData()
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'mapData',
+      chartName: 'map',
+      value: '',
+    })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
+    this.$socket.unRegisterCallBack('stockData')
   },
   methods: {
     // 初始化图表的方法
     async initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.mapRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.mapRef, this.theme)
       // 获取中国地图的矢量数据： 可以通过发送网络请求获取,staic/map/china.json 的数据
       // 由于配置了基础路径，所以不能直接 this.$http.get 来请求 static下的资源
 
@@ -74,12 +100,6 @@ export default {
             color: 'white',
             formatter: `{a}{b}`,
           },
-        },
-        legend: {
-          left: '2%',
-          bottom: '5%',
-          // 图例的方向
-          orient: 'verticle',
         },
       }
       this.chartInstance.setOption(initOption)
@@ -116,12 +136,11 @@ export default {
       })
     },
     // 发送请求，获取数据
-    async getData() {
+    getData(res) {
       // http://127.0.0.1:8888/api/map
-      const { data: res } = await this.$http.get('/map')
+      // const { data: res } = await this.$http.get('/map')
       this.allData = res
 
-      console.log(this.allData)
       this.updateChart()
     },
     // 更新图表配置项
@@ -153,6 +172,10 @@ export default {
       // 数据配置项
       const dataOption = {
         legend: {
+          left: '2%',
+          bottom: '5%',
+          // 图例的方向
+          orient: 'verticle',
           data: legendArr,
         },
         series: seriesArr,

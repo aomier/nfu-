@@ -15,7 +15,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { getThemeValue } from 'utils/theme_utils'
+
+
 export default {
+  // 地区销量趋势
   name: 'Trend',
   data() {
     return {
@@ -56,28 +61,10 @@ export default {
   },
   created() {
     // 在组件创建完成之后，进行回调函数的注册
-    this.$socket.registerCallBack('trendData', this.getData())
-  },
-  mounted() {
-    this.initChart()
-    // this.getData() // websocket
-    // 请求数据
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'trendData',
-      chartName: 'trend',
-      value: '',
-    })
-    window.addEventListener('resize', this.screenAdapter)
-    // 主动触发 响应式配置
-    this.screenAdapter()
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.screenAdapter)
-    // 销毁注册的事件
-    this.$socket.unRegisterCallBack('trendData')
+    this.$socket.registerCallBack('trendData', this.getData)
   },
   computed: {
+    ...mapState(['theme']),
     // 点击过后需要显示的数组
     selectTypes() {
       if (!this.allData) return []
@@ -93,13 +80,46 @@ export default {
     comStyle() {
       return {
         fontSize: this.titleFontSize + 'px',
+        color: getThemeValue(this.theme).titleColor
       }
     },
+  },
+  watch: {
+    theme() {
+      console.log('主题切换了')
+      // 销毁当前的图表
+      this.chartInstance.dispose()
+      // 以最新主题初始化图表对象
+      this.initChart()
+      // 屏幕适配
+      this.screenAdapter()
+      // 渲染数据
+      this.updateChart()
+    },
+  },
+  mounted() {
+    this.initChart()
+    // this.getData()
+    // websocket 请求数据
+    this.$socket.send({
+      action: 'getData',
+      socketType: 'trendData',
+      chartName: 'trend',
+      value: '',
+    })
+    window.addEventListener('resize', this.screenAdapter)
+    // 主动触发 响应式配置
+    this.screenAdapter()
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.screenAdapter)
+    // 销毁注册的事件
+    this.$socket.unRegisterCallBack('trendData')
   },
   methods: {
     // 初始化图表的方法
     initChart() {
-      this.chartInstance = this.$echarts.init(this.$refs.trendRef, 'chalk')
+      this.chartInstance = this.$echarts.init(this.$refs.trendRef, this.theme)
       const initOption = {
         grid: {
           left: '3%',
@@ -115,8 +135,8 @@ export default {
           trigger: 'axis',
         },
         legend: {
-          left: '25%',
-          top: '14%',
+          left: 'center',
+          top: '18%',
           // 图例的icon类型
           icon: 'circle',
         },
@@ -134,9 +154,8 @@ export default {
     // 发送请求，获取数据  //websocket： realData 服务端发送给客户端需要的数据
     async getData(res) {
       // const { data: res } = await this.$http.get('http://127.0.0.1:8888/api/trend')
-
       this.allData = res
-      console.log('this.allData: ', this.allData)
+      console.log('res: ', res)
 
       this.updateChart()
     },
@@ -203,7 +222,7 @@ export default {
           // 间距
           itemGap: this.titleFontSize,
           textStyle: {
-            fontSize: this.titleFontSize / 2,
+            fontSize: this.titleFontSize / 1.3,
           },
         },
       }

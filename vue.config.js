@@ -12,6 +12,7 @@ module.exports = {
         assets: "@/assets",
         network: "@/network",
         views: "@/views",
+        utils: "@/utils",
       }
     }
   },
