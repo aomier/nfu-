@@ -1,8 +1,8 @@
 <template>
   <div class="com-container">
     <div class="com-chart" ref="hotRef"></div>
-    <i class="el-icon-arrow-left icon-left" @click="toLeft" :style="themeStyle"></i>
-    <i class="el-icon-arrow-right icon-right" @click="toRight" :style="themeStyle"></i>
+    <i class="iconfont icon-left" @click="toLeft" :style="themeStyle">&#xe6ef;</i>
+    <i class="iconfont icon-right" @click="toRight" :style="themeStyle">&#xe6ed;</i>
     <span class="cate-name" :style="themeStyle">{{ cateName }}</span>
   </div>
 </template>
@@ -10,7 +10,7 @@
 <script>
 import { mapState } from 'vuex'
 import { getThemeValue } from 'utils/theme_utils'
-import _ from "lodash"
+import _ from 'lodash'
 
 export default {
   name: 'Hot',
@@ -37,11 +37,11 @@ export default {
     },
     themeStyle() {
       if (!this.titleFontSize) {
-        return { color: getThemeValue(this.theme) }
+        return { color: getThemeValue(this.theme).titleColor }
       }
       return {
         fontSize: this.titleFontSize + 'px',
-        color: getThemeValue(this.theme).titleColor
+        color: getThemeValue(this.theme).titleColor,
       }
     },
   },
@@ -107,7 +107,7 @@ export default {
             let showStr = ''
             thirdCategory.forEach(item => {
               showStr += `
-                ${item.name}：${_.round(item.value / total * 100,2)}% <br/>
+                ${item.name}：${_.round((item.value / total) * 100, 2)}% <br/>
               `
             })
             return showStr
@@ -118,6 +118,7 @@ export default {
             type: 'pie',
             label: {
               show: true,
+              formatter:`{b}{d}%`
             },
             // 高亮状态下的样式
             emphasis: {
@@ -206,7 +207,7 @@ export default {
       // 已到达最右边
       if (this.currentIndex > this.allData.length - 1) this.currentIndex = 0
       this.updateChart()
-    }
+    },
   },
 }
 </script>

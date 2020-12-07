@@ -18,7 +18,6 @@
 import { mapState } from 'vuex'
 import { getThemeValue } from 'utils/theme_utils'
 
-
 export default {
   // 地区销量趋势
   name: 'Trend',
@@ -80,7 +79,7 @@ export default {
     comStyle() {
       return {
         fontSize: this.titleFontSize + 'px',
-        color: getThemeValue(this.theme).titleColor
+        color: getThemeValue(this.theme).titleColor,
       }
     },
   },

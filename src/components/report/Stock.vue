@@ -128,7 +128,7 @@ export default {
           data: [
             // 销量
             {
-              name: item.name + '\n\n' + item.sales,
+              name: item.name + '\n' + item.sales,
               value: item.sales,
               itemStyle: {
                 // 创建线性渐变的颜色 从下往上

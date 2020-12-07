@@ -10,7 +10,8 @@ export default new Vuex.Store({
   mutations: {
     changeTheme(state) {
       if (state.theme === 'chalk') {
-        state.theme = 'vintage'
+        // state.theme = 'vintage'
+        state.theme = 'westeros'
       } else {
         state.theme = 'chalk'
       }

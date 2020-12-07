@@ -4,10 +4,10 @@
       <div>
         <img :src="headerSrc" alt="" />
       </div>
-      <span class="logo"> 淘了购电商后台管理系统 </span>
+      <span class="logo"> <a :style="titleColor" href="https://www.bookbook.cc" title="去BookBook.cc主站">bookbook.cc</a> </span>
       <span class="title">电商平台实时监控系统</span>
       <div class="title-right">
-        <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="" />
+        <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
         <div class="datetime">{{ systemDateTime }}</div>
       </div>
     </header>
@@ -127,6 +127,11 @@ export default {
         color: getThemeValue(this.theme).titleColor,
       }
     },
+    titleColor() {
+      return {
+        color: getThemeValue(this.theme).titleColor,
+      }
+    },
   },
   destroyed() {
     // 组件销毁时，销毁事件
@@ -191,7 +196,7 @@ export default {
       this.timerID = setInterval(() => {
         this.systemDateTime = new Date().toLocaleString()
       }, 1000)
-    }
+    },
   },
 }
 </script>
@@ -254,9 +259,8 @@ export default {
     left: 0px;
     top: 50%;
     transform: translateY(-80%);
-    img {
-      height: 35px;
-      width: 128px;
+    a {
+      text-decoration: none;
     }
   }
 }

@@ -98,7 +98,7 @@ export default {
           label: {
             show: true,
             color: 'white',
-            formatter: `{a}{b}`,
+            formatter: `{a}`,
           },
         },
       }
@@ -128,11 +128,6 @@ export default {
         }
         // 赋值给 echarts实例
         this.chartInstance.setOption(changeOption)
-
-        this.$notify.success({
-          message: '双击空白位置回到中国地图',
-          duration: 1500,
-        })
       })
     },
     // 发送请求，获取数据

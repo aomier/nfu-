@@ -3,11 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
-import ElementUI from 'element-ui';
-
-// 引入elementui
-import 'element-ui/lib/theme-chalk/index.css';
-Vue.use(ElementUI);
+import echarts from 'echarts'
 
 // 引入全局样式文件
 import './assets/css/global.less'
@@ -25,8 +21,11 @@ Vue.prototype.$socket = SocketService.Instance
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/'
 Vue.prototype.$http = axios
 
-// echarts 已在 public/index.html 中通过 script引入
-Vue.prototype.$echarts = window.echarts
+// 把echarts挂载到 Vue原型上，以便在全局访问
+Vue.prototype.$echarts = echarts
+// 引入主题
+import './assets/lib/theme/chalk'
+import './assets/lib/theme/westeros'
 
 Vue.config.productionTip = false
 
