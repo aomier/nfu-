@@ -12,14 +12,14 @@ const theme = {
   },
   // 该主题未启用
   vintage: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#dddddd',
     titleColor: "#000000",
     themeSrc: 'qiehuan_light.png',
     headerBorderSrc: 'header_border_light.png',
     sellerAxisPointerColor: '#f1f2f6',
   },
   westeros: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#dddddd',
     titleColor: "#000000",
     themeSrc: 'qiehuan_light.png',
     headerBorderSrc: 'header_border_light.png',

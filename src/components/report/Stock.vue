@@ -148,7 +148,7 @@ export default {
             {
               value: item.stock,
               itemStyle: {
-                color: '#333843',
+                color: '#bbb',
               },
               // 内部的提示框
               tooltip: {

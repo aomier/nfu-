@@ -25,6 +25,7 @@ Vue.prototype.$http = axios
 Vue.prototype.$echarts = echarts
 // 引入主题
 import './assets/lib/theme/chalk'
+import './assets/lib/theme/vintage'
 import './assets/lib/theme/westeros'
 
 Vue.config.productionTip = false
