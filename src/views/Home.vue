@@ -4,7 +4,7 @@
       <div>
         <img :src="headerSrc" alt="" />
       </div>
-      <span class="logo"> <a :style="titleColor" href="https://www.bookbook.cc" title="去BookBook.cc主站">bookbook.cc</a> </span>
+      <span class="logo"> <a :style="titleColor" href="https://www.bookbook.cc" title="去bookbook.cc主站" target="_blank">bookbook.cc</a> </span>
       <span class="title">电商平台实时监控系统</span>
       <div class="title-right">
         <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />

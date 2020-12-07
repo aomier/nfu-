@@ -128,7 +128,7 @@ export default {
           data: [
             // 销量
             {
-              name: item.name + '\n' + item.sales,
+              name: item.name + '\n\n' + item.sales,
               value: item.sales,
               itemStyle: {
                 // 创建线性渐变的颜色 从下往上
@@ -177,7 +177,7 @@ export default {
       console.log('titleFontSize: ', titleFontSize)
       // 圆的内院半径和 外圆半径
       const innerRadius = titleFontSize * 2.8
-      const outerRadius = innerRadius * 1.125
+      const outerRadius = innerRadius * 1.2
       console.log('outerRadius: ', outerRadius)
 
       const adapterOption = {

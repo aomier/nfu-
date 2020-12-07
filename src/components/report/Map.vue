@@ -17,6 +17,8 @@ export default {
       axiosInstance: null,
       // 图表的实例对象
       chartInstance: null,
+      // 中国地图数据
+      chinaMapData: null,
       // 从服务器中获取的所有数据
       allData: null,
       // 获取省份矢量地图数据缓存
@@ -41,7 +43,7 @@ export default {
   },
   created() {
     this.axiosInstance = axios.create({
-      baseURL: 'http://localhost:8999/',
+      baseURL: 'http://localhost:9997/',
     })
     this.$socket.registerCallBack('mapData', this.getData)
   },
@@ -69,10 +71,12 @@ export default {
       // 获取中国地图的矢量数据： 可以通过发送网络请求获取,staic/map/china.json 的数据
       // 由于配置了基础路径，所以不能直接 this.$http.get 来请求 static下的资源
 
-      const { data: res } = await this.axiosInstance.get('/static/map/china.json')
+      if(!this.chinaMapData){
+        const { data: res } = await this.axiosInstance.get('/map/china.json')
+        this.chinaMapData = res
+      }
       // 注册地图数据
-      this.$echarts.registerMap('china', res)
-      console.log(res)
+      this.$echarts.registerMap('china', this.chinaMapData)
 
       // 初始化配置项
       const initOption = {
@@ -135,6 +139,7 @@ export default {
       // http://127.0.0.1:8888/api/map
       // const { data: res } = await this.$http.get('/map')
       this.allData = res
+      console.log('res-----------------------------------------: ', res)
 
       this.updateChart()
     },
@@ -208,7 +213,6 @@ export default {
     },
     // 回到中国地图
     chinaMap() {
-      console.log('back')
       const chinaMapOption = {
         geo: {
           map: 'china',

@@ -1,4 +1,4 @@
-const name2pinyin = {
+const nameChange = {
   安徽: 'anhui',
   陕西: 'shanxi1',
   澳门: 'aomen',
@@ -36,9 +36,9 @@ const name2pinyin = {
 }
 
 export function getProvinceMapInfo (arg) {
-  const path = `/static/map/province/${name2pinyin[arg]}.json`
+  const path = `/map/province/${nameChange[arg]}.json`
   return {
-    key: name2pinyin[arg],
+    key: nameChange[arg],
     path: path
   }
 }
