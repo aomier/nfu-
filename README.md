@@ -39,7 +39,7 @@ cd data-view
 npm install 
 
 // 访问线上后台系统
-npm run dev 
+npm run serve
 ```
 
 ## 三、运行效果截图
