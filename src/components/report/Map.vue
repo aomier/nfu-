@@ -43,7 +43,7 @@ export default {
   },
   created() {
     this.axiosInstance = axios.create({
-      baseURL:'http://120.53.120.229:9997'
+      baseURL: 'http://101.34.160.195:9997',
     })
     this.$socket.registerCallBack('mapData', this.getData)
   },
@@ -71,7 +71,7 @@ export default {
       // 获取中国地图的矢量数据： 可以通过发送网络请求获取,staic/map/china.json 的数据
       // 由于配置了基础路径，所以不能直接 this.$http.get 来请求 static下的资源
 
-      if(!this.chinaMapData){
+      if (!this.chinaMapData) {
         const { data: res } = await this.axiosInstance.get('/map/china.json')
         this.chinaMapData = res
       }
@@ -136,7 +136,7 @@ export default {
     },
     // 发送请求，获取数据
     getData(res) {
-      // http://127.0.0.1:8888/api/map
+      // http://101.34.160.195:8888/api/map
       // const { data: res } = await this.$http.get('/map')
       this.allData = res
       console.log('res-----------------------------------------: ', res)

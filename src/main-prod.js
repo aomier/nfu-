@@ -18,7 +18,7 @@ SocketService.Instance.connect()
 Vue.prototype.$socket = SocketService.Instance
 
 // axios 配置接口默认路径
-axios.defaults.baseURL = 'http://127.0.0.1:8888/api/'
+axios.defaults.baseURL = 'http://101.34.160.195:8888/api/'
 Vue.prototype.$http = axios
 
 // 把echarts挂载到 Vue原型上，以便在全局访问

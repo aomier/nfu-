@@ -145,7 +145,7 @@ export default {
     },
     // 获取服务器数据
     getData(res) {
-      // http://127.0.0.1:8888/api/seller
+      // http://101.34.160.195:8888/api/seller
       // const { data: res } = await this.$http.get('seller')
       // console.log('res: ', res)
 

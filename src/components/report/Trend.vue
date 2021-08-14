@@ -152,7 +152,7 @@ export default {
     },
     // 发送请求，获取数据  //websocket： realData 服务端发送给客户端需要的数据
     async getData(res) {
-      // const { data: res } = await this.$http.get('http://127.0.0.1:8888/api/trend')
+      // const { data: res } = await this.$http.get('http://101.34.160.195:8888/api/trend')
       this.allData = res
       console.log('res: ', res)
 
