@@ -33,29 +33,7 @@ export default {
       activeName: 'map',
       // 指明标题的字体大小
       titleFontSize: 0,
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        {
-          value: '选项2',
-          label: '双皮奶',
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎',
-        },
-        {
-          value: '选项4',
-          label: '龙须面',
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭',
-        },
-      ],
-      value: '',
+      value: ''
     }
   },
   created() {
@@ -79,9 +57,9 @@ export default {
     comStyle() {
       return {
         fontSize: this.titleFontSize + 'px',
-        color: getThemeValue(this.theme).titleColor,
+        color: getThemeValue(this.theme).titleColor
       }
-    },
+    }
   },
   watch: {
     theme() {
@@ -94,7 +72,7 @@ export default {
       this.screenAdapter()
       // 渲染数据
       this.updateChart()
-    },
+    }
   },
   mounted() {
     this.initChart()
@@ -104,7 +82,7 @@ export default {
       action: 'getData',
       socketType: 'trendData',
       chartName: 'trend',
-      value: '',
+      value: ''
     })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
@@ -126,27 +104,27 @@ export default {
           right: '4%',
           bottom: '1%',
           // 把x轴和y轴纳入 grid
-          containLabel: true,
+          containLabel: true
         },
         // 工具提示
         tooltip: {
           // 当鼠标移入坐标轴的显示提示
-          trigger: 'axis',
+          trigger: 'axis'
         },
         legend: {
           left: 'center',
           top: '18%',
           // 图例的icon类型
-          icon: 'circle',
+          icon: 'circle'
         },
         xAxis: {
           type: 'category',
           // 紧挨边缘
-          boundaryGap: false,
+          boundaryGap: false
         },
         yAxis: {
-          type: 'value',
-        },
+          type: 'value'
+        }
       }
       this.chartInstance.setOption(initOption)
     },
@@ -184,15 +162,15 @@ export default {
               // 0% 颜色
               {
                 offset: 0,
-                color: colorArr1[index],
+                color: colorArr1[index]
               },
               // 100% 颜色
               {
                 offset: 1,
-                color: colorArr2[index],
-              },
-            ]),
-          },
+                color: colorArr2[index]
+              }
+            ])
+          }
         }
       })
       // 准备图例的数据
@@ -200,12 +178,12 @@ export default {
 
       const dataOption = {
         xAxis: {
-          data: month,
+          data: month
         },
         legend: {
-          data: legendArr,
+          data: legendArr
         },
-        series: seriesArr,
+        series: seriesArr
       }
       this.chartInstance.setOption(dataOption)
     },
@@ -221,9 +199,9 @@ export default {
           // 间距
           itemGap: this.titleFontSize,
           textStyle: {
-            fontSize: this.titleFontSize / 1.3,
-          },
-        },
+            fontSize: this.titleFontSize / 1.3
+          }
+        }
       }
       this.chartInstance.setOption(adapterOption)
       this.chartInstance.resize()
@@ -232,8 +210,8 @@ export default {
     handleSelect(currentType) {
       this.activeName = currentType
       this.updateChart()
-    },
-  },
+    }
+  }
 }
 </script>
 

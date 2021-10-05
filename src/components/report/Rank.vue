@@ -8,6 +8,7 @@
 import { mapState } from 'vuex'
 
 export default {
+  // 地区销量排行
   name: 'Rank',
   data() {
     return {
@@ -20,14 +21,14 @@ export default {
       // 柱形图结 区域缩放终点值
       endValue: 9,
       // 定时器
-      timerId: null,
+      timerId: null
     }
   },
   created() {
     this.$socket.registerCallBack('rankData', this.getData)
   },
   computed: {
-    ...mapState(['theme']),
+    ...mapState(['theme'])
   },
   watch: {
     theme() {
@@ -40,7 +41,7 @@ export default {
       this.screenAdapter()
       // 渲染数据
       this.updateChart()
-    },
+    }
   },
   mounted() {
     this.initChart()
@@ -49,7 +50,7 @@ export default {
       action: 'getData',
       socketType: 'rankData',
       chartName: 'rank',
-      value: '',
+      value: ''
     })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
@@ -69,7 +70,7 @@ export default {
         title: {
           text: '▎地区销售排行',
           left: 20,
-          top: 20,
+          top: 20
         },
         grid: {
           top: '40%',
@@ -77,16 +78,16 @@ export default {
           right: '5%',
           bottom: '5%',
           // 把x轴和y轴纳入 grid
-          containLabel: true,
+          containLabel: true
         },
         tooltip: {
-          show: true,
+          show: true
         },
         xAxis: {
-          type: 'category',
+          type: 'category'
         },
         yAxis: {
-          value: 'value',
+          value: 'value'
         },
         series: [
           {
@@ -95,10 +96,10 @@ export default {
               show: true,
               position: 'top',
               color: 'white',
-              rotate: 30,
-            },
-          },
-        ],
+              rotate: 30
+            }
+          }
+        ]
       }
       this.chartInstance.setOption(initOption)
 
@@ -130,7 +131,7 @@ export default {
       const colorArr = [
         ['#0BA82C', '#4FF778'],
         ['#2E72BF', '#23E5E5'],
-        ['#5052EE', '#AB6EE5'],
+        ['#5052EE', '#AB6EE5']
       ]
       // const colorArr = [
       //   ['#b8e994', '#079992'],
@@ -144,13 +145,13 @@ export default {
 
       const dataOption = {
         xAxis: {
-          data: provinceInfo,
+          data: provinceInfo
         },
         dataZoom: {
           // 区域缩放组件
           show: false,
           startValue: this.startValue,
-          endValue: this.endValue,
+          endValue: this.endValue
         },
         series: [
           {
@@ -171,12 +172,12 @@ export default {
                   // 0%
                   { offset: 0, color: targetColorArr[0] },
                   // 100%
-                  { offset: 1, color: targetColorArr[1] },
+                  { offset: 1, color: targetColorArr[1] }
                 ])
-              },
-            },
-          },
-        ],
+              }
+            }
+          }
+        ]
       }
       this.chartInstance.setOption(dataOption)
     },
@@ -187,17 +188,17 @@ export default {
       const adapterOption = {
         title: {
           textStyle: {
-            fontSize: titleFontSzie,
-          },
+            fontSize: titleFontSzie
+          }
         },
         series: [
           {
             barWidth: titleFontSzie,
             itemStyle: {
-              barBorderRadius: [titleFontSzie / 2, titleFontSzie / 2, 0, 0],
-            },
-          },
-        ],
+              barBorderRadius: [titleFontSzie / 2, titleFontSzie / 2, 0, 0]
+            }
+          }
+        ]
       }
       this.chartInstance.setOption(adapterOption)
       this.chartInstance.resize()
@@ -216,10 +217,9 @@ export default {
         }
         this.updateChart()
       }, 2000)
-    },
-  },
+    }
+  }
 }
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
