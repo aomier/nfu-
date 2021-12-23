@@ -1,4 +1,6 @@
 module.exports = {
+  publicPath: '/vue2/data-view',
+  outputDir: 'data-view',
   devServer: {
     port: 8999, //端口号
     open: true, //自动打开浏览器
@@ -6,15 +8,15 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        components: "@/components",
-        content: "@/components/content",
-        common: "@/components/common",
-        assets: "@/assets",
-        network: "@/network",
-        views: "@/views",
-        utils: "@/utils",
-      }
-    }
+        components: '@/components',
+        content: '@/components/content',
+        common: '@/components/common',
+        assets: '@/assets',
+        network: '@/network',
+        views: '@/views',
+        utils: '@/utils',
+      },
+    },
   },
   chainWebpack: config => {
     // 发布模式
@@ -46,6 +48,5 @@ module.exports = {
       })
       config.entry('app').clear().add('./src/main-dev.js')
     })
-
-  }
+  },
 }

@@ -2,12 +2,16 @@
   <div class="screen-container" :style="containerStyle">
     <header class="screen-header">
       <div>
-        <img :src="headerSrc" alt="" />
+        <!-- <img :src="headerSrc" alt=""> -->
+        <img v-show="theme == 'chalk'" src="~@/assets/images/header_border_dark.png" alt="" />
+        <img v-show="theme != 'chalk'" src="~@/assets/images/header_border_light.png" alt="" />
       </div>
       <span class="logo"> <a :style="titleColor" href="https://www.bookbook.cc" title="去bookbook.cc主站" target="_blank">bookbook.cc</a> </span>
       <span class="title">电商平台实时监控系统</span>
       <div class="title-right">
-        <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
+        <!-- <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题"> -->
+        <img v-show="theme == 'chalk'" src="~@/assets/images/qiehuan_dark.png" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
+        <img v-show="theme != 'chalk'" src="~@/assets/images/qiehuan_light.png" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
         <div class="datetime">{{ systemDateTime }}</div>
       </div>
     </header>
