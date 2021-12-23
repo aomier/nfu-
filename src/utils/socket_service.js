@@ -25,23 +25,26 @@ export default class SocketService {
   // 定义连接服务器的方法
   connect() {
     // 连接服务器
-    if (!window.WebSocket) return console.log('您的浏览器不支持 WebSocket');
+    if (!window.WebSocket) return console.log('您的浏览器不支持 WebSocket')
 
-    this.ws = new WebSocket('ws://101.34.160.195:9998')
+    if (process.env.NODE_ENV === 'development') {
+      this.ws = new WebSocket('ws://101.34.160.195:9998')
+    } else {
+      this.ws = new WebSocket('wss://101.34.160.195:9998')
+    }
 
     // 使用接口地址
     // this.ws = new WebSocket('ws://101.34.160.195:9998')
-
 
     // 连接成功的事件
     this.ws.onopen = () => {
       this.connected = true
       this.connectRetryCount = 0
-      console.log('连接服务端成功了');
+      console.log('连接服务端成功了')
     }
 
     // 接收到服务端数据
-    this.ws.onmessage = (msg) => {
+    this.ws.onmessage = msg => {
       // 保存接收到的数据
       const recvData = JSON.parse(msg.data)
       // console.log('接收到数据：',recvData);
@@ -63,30 +66,29 @@ export default class SocketService {
           this.callBackMapping[socketType].call(this, recvData)
         }
       }
-
     }
 
     // 连接服务端失败
     this.ws.onerror = () => {
       this.connected = false
-      console.log('连接服务端失败');
+      console.log('连接服务端失败')
     }
 
     // 连接已关闭  当连接成功后:服务器关闭
     this.ws.onclose = () => {
       this.connectRetryCount++
       this.connected = false
-      console.log('连接已关闭');
+      console.log('连接已关闭')
       setTimeout(() => {
         this.connect()
-      }, this.connectRetryCount * 500);
+      }, this.connectRetryCount * 500)
     }
   }
 
   /**
    * 注册回调函数
-   * @param {socketType} 业务模块类型 
-   * @param {*} callback 
+   * @param {socketType} 业务模块类型
+   * @param {*} callback
    */
   registerCallBack(socketType, callback) {
     this.callBackMapping[socketType] = callback
@@ -109,8 +111,7 @@ export default class SocketService {
 
       setTimeout(() => {
         this.send(data)
-      }, this.sendRetryCount * 500);
+      }, this.sendRetryCount * 500)
     }
-
   }
 }
