@@ -38,7 +38,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -147,7 +146,6 @@ export default {
     async getData() {
       // http://101.34.160.195:8888/api/seller
       const { data: res } = await this.$http.get('/seller')
-      // console.log('res: ', res)
 
       this.allData = res
       // 对数组排序 从小到大进行排序
@@ -166,7 +164,6 @@ export default {
       const start = (this.curretnPage - 1) * 5
       const end = this.curretnPage * 5
       const showData = this.allData.slice(start, end)
-      console.log('showData: ', showData)
 
       // y轴上的数据
       const sellerNames = showData.map(item => item.name)

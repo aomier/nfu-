@@ -46,7 +46,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -174,11 +173,9 @@ export default {
     // 不同分辨率的响应式
     screenAdapter() {
       const titleFontSize = (this.$refs.stockRef.offsetWidth / 100) * 3.6
-      console.log('titleFontSize: ', titleFontSize)
       // 圆的内院半径和 外圆半径
       const innerRadius = titleFontSize * 2.8
       const outerRadius = innerRadius * 1.2
-      console.log('outerRadius: ', outerRadius)
 
       const adapterOption = {
         title: {

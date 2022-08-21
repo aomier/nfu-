@@ -63,7 +63,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -132,7 +131,6 @@ export default {
     async getData() {
       const { data: res } = await this.$http.get('/trend')
       this.allData = res
-      console.log('res: ', res)
 
       this.updateChart()
     },

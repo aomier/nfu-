@@ -12,10 +12,9 @@ import './assets/css/global.less'
 import './assets/font/iconfont.css'
 
 // 引入 socket_service
-import SocketService from './utils/socket_service'
-// 对服务端进行 webSocket的连接
-SocketService.Instance.connect()
-Vue.prototype.$socket = SocketService.Instance
+// import SocketService from './utils/socket_service'
+// SocketService.Instance.connect()
+// Vue.prototype.$socket = SocketService.Instance
 
 // axios 配置接口默认路径
 axios.defaults.baseURL = 'http://101.34.160.195:8888/api/'

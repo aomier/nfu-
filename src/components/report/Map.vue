@@ -29,7 +29,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -110,7 +109,6 @@ export default {
 
       // 进入省份事件函数
       this.chartInstance.on('click', async e => {
-        // console.log('地图被点击了', e)
         // 通过工具函数拿到点击的地图对应的中文拼音(key),和拼接出需要的文件路径(path)
         const ProvinceInfo = getProvinceMapInfo(e.name)
 
@@ -185,7 +183,6 @@ export default {
     screenAdapter() {
       // 当前比较合适的字体大小
       const titleFontSize = (this.$refs.mapRef.offsetWidth / 100) * 3.6
-      console.log('titleFontSize: ', titleFontSize)
 
       // 响应式的配置项
       const adapterOption = {

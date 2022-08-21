@@ -164,8 +164,6 @@ export default {
     },
     // 服务端广播全屏事件的客户端响应
     recvData(data) {
-      console.log(data)
-
       // 取出是那一个图表进行切换
       const chartName = data.chartName
       // 判断切换成什么类型[true全屏，false取消全屏]

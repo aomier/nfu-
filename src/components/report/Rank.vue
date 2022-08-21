@@ -32,7 +32,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -115,12 +114,10 @@ export default {
     // 发送请求，获取数据
     async getData() {
       const { data: res } = await this.$http.get('/rank')
-      console.log('res: ', res)
       this.allData = res
       // 对数据进行排序(大到小)
       this.allData.sort((a, b) => b.value - a.value)
 
-      console.log(this.allData)
       this.updateChart()
       // 开始自动切换
       this.startInterval()

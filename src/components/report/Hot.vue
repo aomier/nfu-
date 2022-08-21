@@ -48,7 +48,6 @@ export default {
   },
   watch: {
     theme() {
-      console.log('主题切换了')
       // 销毁当前的图表
       this.chartInstance.dispose()
       // 以最新主题初始化图表对象
@@ -96,7 +95,6 @@ export default {
           show: true,
           // formatter:'hhh'
           formatter: arg => {
-            // console.log('arg: ', arg)
             // 拿到三级分类的数据
             const thirdCategory = arg.data.children
             // 计算所有三级分类的数值总和，才能计算出百分比
@@ -136,9 +134,7 @@ export default {
     // 发送请求，获取数据
     async getData() {
       const { data: res } = await this.$http.get('/hotproduct')
-      console.log('res: ', res);
       this.allData = res
-      console.log(this.allData)
       this.updateChart()
     },
     // 更新图表配置项
@@ -167,7 +163,6 @@ export default {
     // 不同分辨率的响应式
     screenAdapter() {
       this.titleFontSize = (this.$refs.hotRef.offsetWidth / 100) * 3.6
-      console.log('titleFontSize: ', this.titleFontSize)
 
       const adapterOption = {
         title: {
