@@ -36,7 +36,7 @@ git clone https://gitee.com/penggang-home/data-view.git
 cd data-view
 
 // 安装对应依赖
-npm install
+cnpm install
 
 // 访问线上后台系统
 npm run serve
@@ -46,35 +46,35 @@ npm run serve
 
 #### 2.1 黑色主题
 
-![dark](./data/dark.png)
+![dark](./images/dark.png)
 
 #### 2.2 亮色主题
 
-![dark](./data/light.png)
+![dark](./images/light.png)
 
 #### 2.3 热销商品占比
 
-![dark](./data/hot.png)
+![dark](./images/hot.png)
 
 #### 2.4 商家分布
 
-![dark](./data/map.png)
+![dark](./images/map.png)
 
 #### 2.5 地区销售排行
 
-![dark](./data/rank.png)
+![dark](./images/rank.png)
 
 #### 2.6 商家销售统计
 
-![dark](./data/seller.png)
+![dark](./images/seller.png)
 
 #### 2.7 库存和销量分析
 
-![dark](./data/stock.png)
+![dark](./images/stock.png)
 
 #### 2.8 地区销量趋势
 
-![dark](./data/trend.png)
+![dark](./images/trend.png)
 
 ## 四、 联系我
 
@@ -88,4 +88,4 @@ npm run serve
 
 | QQ                  | WeChat              |
 | ------------------- | ------------------- |
-| ![QQ](/data/qq.jpg) | ![wx](/data/wx.jpg) |
+| ![QQ](./images/qq.jpg) | ![wx](./images/wx.jpg) |

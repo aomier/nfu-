@@ -25,7 +25,7 @@ export default {
     }
   },
   created() {
-    this.$socket.registerCallBack('rankData', this.getData)
+    // this.$socket.registerCallBack('rankData', this.getData)
   },
   computed: {
     ...mapState(['theme'])
@@ -45,13 +45,13 @@ export default {
   },
   mounted() {
     this.initChart()
-    // this.getData()
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'rankData',
-      chartName: 'rank',
-      value: ''
-    })
+    this.getData()
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'rankData',
+    //   chartName: 'rank',
+    //   value: ''
+    // })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
@@ -59,7 +59,7 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
     clearInterval(this.timerId)
-    this.$socket.unRegisterCallBack('rankData')
+    // this.$socket.unRegisterCallBack('rankData')
   },
   methods: {
     // 初始化图表的方法
@@ -113,8 +113,8 @@ export default {
       })
     },
     // 发送请求，获取数据
-    async getData(res) {
-      // const { data: res } = await this.$http.get('/rank')
+    async getData() {
+      const { data: res } = await this.$http.get('/rank')
       console.log('res: ', res)
       this.allData = res
       // 对数据进行排序(大到小)

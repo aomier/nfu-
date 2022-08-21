@@ -19,15 +19,14 @@
       <section class="screen-left">
         <div id="left-top" :class="{ fullscreen: fullScreenStatus.trend }">
           <!-- 销量趋势图表 -->
-          <trend ref="trend"></trend>
+          <Trend ref="trend"></Trend>
           <div class="resize">
-            <!-- icon-compress-alt 向内 -->
             <span @click="changeSize('trend')" :class="['iconfont', fullScreenStatus.trend ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
           </div>
         </div>
         <div id="left-bottom" :class="{ fullscreen: fullScreenStatus.seller }">
           <!-- 商家销售金额图表 -->
-          <seller ref="seller"></seller>
+          <Seller ref="seller"></Seller>
           <div class="resize">
             <span @click="changeSize('seller')" :class="['iconfont', fullScreenStatus.seller ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
           </div>
@@ -43,7 +42,7 @@
         </div>
         <div id="middle-bottom" :class="{ fullscreen: fullScreenStatus.rank }">
           <!-- 地区销量排行图表 -->
-          <rank ref="rank"></rank>
+          <Rank ref="rank"></Rank>
           <div class="resize">
             <span @click="changeSize('rank')" :class="['iconfont', fullScreenStatus.rank ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
           </div>
@@ -52,14 +51,14 @@
       <section class="screen-right">
         <div id="right-top" :class="{ fullscreen: fullScreenStatus.hot }">
           <!-- 热销商品占比图表 -->
-          <hot ref="hot"></hot>
+          <Hot ref="hot"></Hot>
           <div class="resize">
             <span @click="changeSize('hot')" :class="['iconfont', fullScreenStatus.hot ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
           </div>
         </div>
         <div id="right-bottom" :class="{ fullscreen: fullScreenStatus.stock }">
           <!-- 库存销量分析图表 -->
-          <stock ref="stock"></stock>
+          <Stock ref="stock"></Stock>
           <div class="resize">
             <span @click="changeSize('stock')" :class="['iconfont', fullScreenStatus.stock ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
           </div>
@@ -110,9 +109,9 @@ export default {
   },
   created() {
     // 注册服务端广播的全屏事件
-    this.$socket.registerCallBack('fullScreen', this.recvData)
-    // 注册服务器广播的主题切换事件
-    this.$socket.registerCallBack('themeChange', this.recvThemeChange)
+    // this.$socket.registerCallBack('fullScreen', this.recvData)
+    // // 注册服务器广播的主题切换事件
+    // this.$socket.registerCallBack('themeChange', this.recvThemeChange)
     this.currentTime()
   },
   computed: {
@@ -139,29 +138,29 @@ export default {
   },
   destroyed() {
     // 组件销毁时，销毁事件
-    this.$socket.unRegisterCallBack('fullScreen')
-    this.$socket.unRegisterCallBack('themeChange')
+    // this.$socket.unRegisterCallBack('fullScreen')
+    // this.$socket.unRegisterCallBack('themeChange')
     clearInterval(this.timerID)
   },
   methods: {
     // 监听全屏事件
     changeSize(chartName) {
       // 1.改变fullScreenStatus
-      // this.fullScreenStatus[chartName] = !this.fullScreenStatus[chartName]
-      // // 2.手动调用每个图表中的 screenAdapter 触发响应式
-      // this.$nextTick(() => {
-      //   this.$refs[chartName].screenAdapter()
-      // })
+      this.fullScreenStatus[chartName] = !this.fullScreenStatus[chartName]
+      // 2.手动调用每个图表中的 screenAdapter 触发响应式
+      this.$nextTick(() => {
+        this.$refs[chartName].screenAdapter()
+      })
 
       // 一端操作多端同步效果
       // 将事件发送给服务端，让服务端广播事件 true全屏，false取消全屏
-      const targetValue = !this.fullScreenStatus[chartName]
-      this.$socket.send({
-        action: 'fullScreen',
-        socketType: 'fullScreen',
-        chartName: chartName,
-        value: targetValue,
-      })
+      // const targetValue = !this.fullScreenStatus[chartName]
+      // this.$socket.send({
+      //   action: 'fullScreen',
+      //   socketType: 'fullScreen',
+      //   chartName: chartName,
+      //   value: targetValue,
+      // })
     },
     // 服务端广播全屏事件的客户端响应
     recvData(data) {
@@ -179,19 +178,19 @@ export default {
     },
     // 主题切换事件
     handleChangeTheme() {
-      // this.$store.commit('changeTheme')
+      this.$store.commit('changeTheme')
 
-      this.$socket.send({
-        action: 'themeChange',
-        socketType: 'themeChange',
-        chartName: '',
-        value: '',
-      })
+      // this.$socket.send({
+      //   action: 'themeChange',
+      //   socketType: 'themeChange',
+      //   chartName: '',
+      //   value: '',
+      // })
     },
     // 接收到服务器切换主题事件
-    recvThemeChange() {
-      this.$store.commit('changeTheme')
-    },
+    // recvThemeChange() {
+    //   this.$store.commit('changeTheme')
+    // },
     currentTime() {
       this.systemDateTime = new Date().toLocaleString()
 

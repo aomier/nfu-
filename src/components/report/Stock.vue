@@ -39,7 +39,7 @@ export default {
     }
   },
   created() {
-    this.$socket.registerCallBack('stockData', this.getData)
+    // this.$socket.registerCallBack('stockData', this.getData)
   },
   computed: {
     ...mapState(['theme']),
@@ -59,13 +59,13 @@ export default {
   },
   mounted() {
     this.initChart()
-    // this.getData()
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'stockData',
-      chartName: 'stock',
-      value: '',
-    })
+    this.getData()
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'stockData',
+    //   chartName: 'stock',
+    //   value: '',
+    // })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
@@ -73,7 +73,7 @@ export default {
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
     clearInterval(this.timerId)
-    this.$socket.unRegisterCallBack('stockData')
+    // this.$socket.unRegisterCallBack('stockData')
   },
   methods: {
     // 初始化图表的方法
@@ -94,8 +94,8 @@ export default {
       this.chartInstance.on('mouseout', this.startInterval)
     },
     // 发送请求，获取数据
-    getData(res) {
-      // const { data: res } = await this.$http.get('/stock')
+    async getData() {
+      const { data: res } = await this.$http.get('/stock')
       this.allData = res
 
       this.updateChart()

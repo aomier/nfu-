@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { getProvinceMapInfo } from '@/utils/map_utils'
 import { mapState } from 'vuex'
 
@@ -42,37 +41,38 @@ export default {
     },
   },
   created() {
-    this.axiosInstance = axios.create({
-      baseURL: 'http://101.34.160.195:9997',
-    })
-    this.$socket.registerCallBack('mapData', this.getData)
+    this.getData()
+    // this.axiosInstance = axios.create({
+    //   baseURL: 'http://101.34.160.195:9997',
+    // })
+    // this.$socket.registerCallBack('mapData', this.getData)
   },
   mounted() {
     this.initChart()
     // this.getData()
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'mapData',
-      chartName: 'map',
-      value: '',
-    })
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'mapData',
+    //   chartName: 'map',
+    //   value: '',
+    // })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
-    this.$socket.unRegisterCallBack('stockData')
+    // this.$socket.unRegisterCallBack('stockData')
   },
   methods: {
     // 初始化图表的方法
     async initChart() {
       this.chartInstance = this.$echarts.init(this.$refs.mapRef, this.theme)
-      // 获取中国地图的矢量数据： 可以通过发送网络请求获取,staic/map/china.json 的数据
+      // 获取中国地图的矢量数据： 可以通过发送网络请求获取,static/map/china.json 的数据
       // 由于配置了基础路径，所以不能直接 this.$http.get 来请求 static下的资源
 
       if (!this.chinaMapData) {
-        const { data: res } = await this.axiosInstance.get('/map/china.json')
+        const { data: res } = await this.$http.get('/map/china')
         this.chinaMapData = res
       }
       // 注册地图数据
@@ -117,7 +117,7 @@ export default {
         // 先判断是否已经存在需要请求的数据
         if (!this.cityMapData[ProvinceInfo.key]) {
           // 不存在： 发送请求,获取点击的地图的矢量数据
-          const { data: res } = await this.axiosInstance.get(ProvinceInfo.path)
+          const { data: res } = await this.$http.get(ProvinceInfo.path)
           // 把请求到的数据保存下来
           this.cityMapData[ProvinceInfo.key] = res
           // 注册点击的地图
@@ -135,11 +135,10 @@ export default {
       })
     },
     // 发送请求，获取数据
-    getData(res) {
+    async getData() {
       // http://101.34.160.195:8888/api/map
-      // const { data: res } = await this.$http.get('/map')
+      const { data: res } = await this.$http.get('/map')
       this.allData = res
-      console.log('res-----------------------------------------: ', res)
 
       this.updateChart()
     },
@@ -224,5 +223,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

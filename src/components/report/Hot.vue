@@ -27,7 +27,8 @@ export default {
     }
   },
   created() {
-    this.$socket.registerCallBack('hotData', this.getData)
+    // this.$socket.registerCallBack('hotData', this.getData)
+    this.getData()
   },
   computed: {
     ...mapState(['theme']),
@@ -60,20 +61,20 @@ export default {
   },
   mounted() {
     this.initChart()
-    // this.getData()
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'hotData',
-      chartName: 'hotproduct',
-      value: '',
-    })
+    this.getData()
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'hotData',
+    //   chartName: 'hotproduct',
+    //   value: '',
+    // })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
   },
   destroyed() {
     window.removeEventListener('resize', this.screenAdapter)
-    this.$socket.unRegisterCallBack('hotData')
+    // this.$socket.unRegisterCallBack('hotData')
   },
   methods: {
     // 初始化图表的方法
@@ -133,8 +134,9 @@ export default {
       this.chartInstance.setOption(initOption)
     },
     // 发送请求，获取数据
-    getData(res) {
-      // const { data: res } = await this.$http.get('/hotproduct')
+    async getData() {
+      const { data: res } = await this.$http.get('/hotproduct')
+      console.log('res: ', res);
       this.allData = res
       console.log(this.allData)
       this.updateChart()

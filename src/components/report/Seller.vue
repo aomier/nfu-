@@ -28,7 +28,7 @@ export default {
     }
   },
   created() {
-    this.$socket.registerCallBack('sellerData', this.getData)
+    // this.$socket.registerCallBack('sellerData', this.getData)
   },
   computed: {
     ...mapState(['theme']),
@@ -52,13 +52,13 @@ export default {
   mounted() {
     // 由于初始化 使用到了DOM元素，因此需要在 mounted生命周期内调用
     this.initChart()
-    // this.getData();
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'sellerData',
-      chartName: 'seller',
-      value: '',
-    })
+    this.getData()
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'sellerData',
+    //   chartName: 'seller',
+    //   value: '',
+    // })
     // 在界面加载完成时，主动对屏幕进行适配
     this.screenAdapter()
     window.addEventListener('resize', this.screenAdapter)
@@ -68,7 +68,7 @@ export default {
     clearInterval(this.timeID)
     // 在组件销毁的时候，把监听器取消掉
     window.removeEventListener('resize', this.screenAdapter)
-    this.$socket.unRegisterCallBack('sellerData')
+    // this.$socket.unRegisterCallBack('sellerData')
   },
   methods: {
     // 初始化 echartsInstance 对象
@@ -144,9 +144,9 @@ export default {
       })
     },
     // 获取服务器数据
-    getData(res) {
+    async getData() {
       // http://101.34.160.195:8888/api/seller
-      // const { data: res } = await this.$http.get('seller')
+      const { data: res } = await this.$http.get('/seller')
       // console.log('res: ', res)
 
       this.allData = res
@@ -235,5 +235,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

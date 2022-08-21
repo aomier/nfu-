@@ -38,7 +38,7 @@ export default {
   },
   created() {
     // 在组件创建完成之后，进行回调函数的注册
-    this.$socket.registerCallBack('trendData', this.getData)
+    // this.$socket.registerCallBack('trendData', this.getData)
   },
   computed: {
     ...mapState(['theme']),
@@ -76,14 +76,14 @@ export default {
   },
   mounted() {
     this.initChart()
-    // this.getData()
+    this.getData()
     // websocket 请求数据
-    this.$socket.send({
-      action: 'getData',
-      socketType: 'trendData',
-      chartName: 'trend',
-      value: ''
-    })
+    // this.$socket.send({
+    //   action: 'getData',
+    //   socketType: 'trendData',
+    //   chartName: 'trend',
+    //   value: ''
+    // })
     window.addEventListener('resize', this.screenAdapter)
     // 主动触发 响应式配置
     this.screenAdapter()
@@ -129,8 +129,8 @@ export default {
       this.chartInstance.setOption(initOption)
     },
     // 发送请求，获取数据  //websocket： realData 服务端发送给客户端需要的数据
-    async getData(res) {
-      // const { data: res } = await this.$http.get('http://101.34.160.195:8888/api/trend')
+    async getData() {
+      const { data: res } = await this.$http.get('/trend')
       this.allData = res
       console.log('res: ', res)
 
