@@ -1,5 +1,6 @@
 module.exports = {
-  publicPath: '/vue2/data-view',
+  publicPath: '/vue2/data-view', // 根据情况自行修改
+  // publicPath: '/',
   outputDir: 'data-view',
   devServer: {
     port: 8999, //端口号

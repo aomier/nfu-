@@ -1,6 +1,6 @@
 ## 电商平台实时监控系统
 
-## 预览地址: [点击预览](http://101.34.160.195:8001)
+## 预览地址: [点击预览](https://www.bookbook.cc/vue2/data-view)
 
 ## 项目前端地址(当前)：[点击前往](https://gitee.com/penggang-home/data-view)
 
@@ -23,7 +23,7 @@
 - WebSocket
 - axios
 - webpack
-- ES6/7
+- ES6+
 - less
 
 ## 二、如何运行该项目？
