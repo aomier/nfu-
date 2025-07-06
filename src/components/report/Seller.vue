@@ -11,6 +11,12 @@ import { getThemeValue } from 'utils/theme_utils'
 export default {
   // 商家销售统计
   name: 'Seller',
+  props: {
+    analysisData: {
+      type: Object,
+      default: null
+    }
+  },
   data() {
     return {
       // echarts 实例对象
@@ -25,6 +31,8 @@ export default {
       timerId: null,
       // 当鼠标移入axis(坐标轴)时展示 底层的背景色
       PointerColor: this.axisPointerColor,
+      originalChartData: null,
+      isAnalysisMode: false
     }
   },
   created() {
@@ -228,6 +236,63 @@ export default {
       // 手动调用图表的 resize 才能产生效果
       this.chartInstance.resize()
     },
+    getAllData() {
+      return {
+        chartOptions: { ...this.chartOptions },
+        allData: [...this.allData]
+      }
+    },
+    updateWithAnalysisData(analysisConfig) {
+      this.isAnalysisMode = true
+      
+      // 转换数据格式为地图需要的格式
+      const mapData = analysisConfig.data.map(item => ({
+        name: this.getCityNameForProfit(item.name),
+        value: item.value
+      }))
+      
+      const newOptions = {
+        title: {
+          text: analysisConfig.title,
+          left: 20,
+          top: 20,
+          textStyle: {
+            color: getThemeValue(this.theme).titleColor
+          }
+        },
+        series: [
+          {
+            ...this.chartOptions.series[0],
+            data: mapData
+          }
+        ]
+      }
+      
+      this.chartInstance.setOption(newOptions, true)
+    },
+    getCityNameForProfit(category) {
+      // 将品类映射到省份/城市
+      const mapping = {
+        '美妆保健': '北京',
+        '手表': '上海',
+        '宠物': '广东',
+        '女鞋': '浙江',
+        '游戏电玩': '江苏',
+        '女包': '四川',
+        '家居生活': '湖北',
+        '运动户外': '陕西',
+        '男装': '江苏',
+        '食品饮料': '天津'
+      }
+      return mapping[category] || '其他'
+    },
+    restoreOriginalData(originalData) {
+      this.isAnalysisMode = false
+      
+      if (originalData && originalData.chartOptions) {
+        this.chartInstance.setOption(originalData.chartOptions, true)
+      }
+    }
   },
 }
 </script>

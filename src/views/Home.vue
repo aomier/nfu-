@@ -1,323 +1,584 @@
 <template>
-  <div class="screen-container" :style="containerStyle">
-    <header class="screen-header">
-      <div>
-        <!-- <img :src="headerSrc" alt=""> -->
-        <img v-show="theme == 'chalk'" src="~@/assets/images/header_border_dark.png" alt="" />
-        <img v-show="theme != 'chalk'" src="~@/assets/images/header_border_light.png" alt="" />
-      </div>
-      <span class="logo"> <a :style="titleColor" href="https://www.bookbook.cc" title="去bookbook.cc主站" target="_blank">bookbook.cc</a> </span>
-      <span class="title">电商平台实时监控系统</span>
-      <div class="title-right">
-        <!-- <img :src="themeSrc" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题"> -->
-        <img v-show="theme == 'chalk'" src="~@/assets/images/qiehuan_dark.png" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
-        <img v-show="theme != 'chalk'" src="~@/assets/images/qiehuan_light.png" class="qiehuan" @click="handleChangeTheme" alt="切换主题" title="切换主题" />
-        <div class="datetime">{{ systemDateTime }}</div>
-      </div>
-    </header>
-    <div class="screen-body">
-      <section class="screen-left">
-        <div id="left-top" :class="{ fullscreen: fullScreenStatus.trend }">
-          <!-- 销量趋势图表 -->
-          <Trend ref="trend"></Trend>
-          <div class="resize">
-            <span @click="changeSize('trend')" :class="['iconfont', fullScreenStatus.trend ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
+  <div class="screen-container">
+    <canvas ref="backgroundCanvas" class="background-canvas"></canvas>
+    
+    <div class="content-wrapper">
+      <!-- 头部 -->
+      <header class="screen-header">
+        <div class="header-left">
+          <span class="logo-text">智能数据分析平台</span>
+          <span class="logo-subtext">Intelligent Data Analytics</span>
+        </div>
+        <div class="header-right">
+          <div class="datetime">{{ currentTime }}</div>
+          <div class="system-status">
+            <div class="status-dot"></div>
+            <span>系统运行正常</span>
           </div>
         </div>
-        <div id="left-bottom" :class="{ fullscreen: fullScreenStatus.seller }">
-          <!-- 商家销售金额图表 -->
-          <Seller ref="seller"></Seller>
-          <div class="resize">
-            <span @click="changeSize('seller')" :class="['iconfont', fullScreenStatus.seller ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
+      </header>
+
+      <!-- 主体内容 - 确保这部分存在 -->
+      <main class="screen-body">
+        <div class="bento-grid">
+          <!-- 欢迎卡片 -->
+          <div class="bento-cell welcome-cell">
+            <h1 class="welcome-title">数据驱动决策</h1>
+            <p class="welcome-description">
+              通过先进的机器学习算法和数据可视化技术，为您的业务提供深度洞察和智能分析。
+            </p>
+            <div class="research-stats">
+              <div class="stat-item">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">分析模型</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">99.5%</div>
+                <div class="stat-label">准确率</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">实时监控</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 盈利能力分析卡片 -->
+          <div class="bento-cell module-card" @click="navigateToModule('profit')">
+            <!-- 确保这里的参数是 'profit' -->
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-header">
+                <div class="module-icon profit-icon">
+                  💰
+                </div>
+                <span class="module-badge">财务分析</span>
+              </div>
+              <h3 class="module-title">盈利能力分析</h3>
+              <p class="module-desc">
+                深入分析企业盈利结构，识别高价值客户群体，优化资源配置策略。
+              </p>
+              <div class="card-footer">
+                <div class="method-tags">
+                  <span>ROI分析</span>
+                  <span>客户细分</span>
+                </div>
+                <div class="enter-btn">
+                  <span>进入分析</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- K-means聚类 -->
+          <div class="bento-cell module-card" @click="navigateToModule('kmeans')">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-header">
+                <div class="module-icon kmeans-icon">
+                  📊
+                </div>
+                <span class="module-badge">机器学习</span>
+              </div>
+              <h3 class="module-title">K-means 聚类分析</h3>
+              <p class="module-desc">
+                基于无监督学习的聚类算法，自动识别数据中的隐藏模式和客户群体。
+              </p>
+              <div class="card-footer">
+                <div class="method-tags">
+                  <span>聚类算法</span>
+                  <span>模式识别</span>
+                </div>
+                <div class="enter-btn">
+                  <span>进入分析</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prophet预测 -->
+          <div class="bento-cell module-card" @click="navigateToModule('prophet')">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-header">
+                <div class="module-icon prophet-icon">
+                  📈
+                </div>
+                <span class="module-badge">时间序列</span>
+              </div>
+              <h3 class="module-title">Prophet 时间序列预测</h3>
+              <p class="module-desc">
+                利用Facebook开源的Prophet模型，准确预测业务指标的未来趋势。
+              </p>
+              <div class="card-footer">
+                <div class="method-tags">
+                  <span>趋势预测</span>
+                  <span>季节性分析</span>
+                </div>
+                <div class="enter-btn">
+                  <span>进入分析</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热力图分析 -->
+          <div class="bento-cell module-card" @click="navigateToModule('heatmap')">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-header">
+                <div class="module-icon heatmap-icon">
+                  🔥
+                </div>
+                <span class="module-badge">可视化</span>
+              </div>
+              <h3 class="module-title">热力图可视化</h3>
+              <p class="module-desc">
+                直观展示数据分布和相关性，快速识别业务热点和异常区域。
+              </p>
+              <div class="card-footer">
+                <div class="method-tags">
+                  <span>数据可视化</span>
+                  <span>相关性分析</span>
+                </div>
+                <div class="enter-btn">
+                  <span>进入分析</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
-      <section class="screen-middle">
-        <div id="middle-top" :class="{ fullscreen: fullScreenStatus.map }">
-          <!-- 商家分布图表 -->
-          <single-map ref="map"></single-map>
-          <div class="resize">
-            <span @click="changeSize('map')" :class="['iconfont', fullScreenStatus.map ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
-          </div>
-        </div>
-        <div id="middle-bottom" :class="{ fullscreen: fullScreenStatus.rank }">
-          <!-- 地区销量排行图表 -->
-          <Rank ref="rank"></Rank>
-          <div class="resize">
-            <span @click="changeSize('rank')" :class="['iconfont', fullScreenStatus.rank ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
-          </div>
-        </div>
-      </section>
-      <section class="screen-right">
-        <div id="right-top" :class="{ fullscreen: fullScreenStatus.hot }">
-          <!-- 热销商品占比图表 -->
-          <Hot ref="hot"></Hot>
-          <div class="resize">
-            <span @click="changeSize('hot')" :class="['iconfont', fullScreenStatus.hot ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
-          </div>
-        </div>
-        <div id="right-bottom" :class="{ fullscreen: fullScreenStatus.stock }">
-          <!-- 库存销量分析图表 -->
-          <Stock ref="stock"></Stock>
-          <div class="resize">
-            <span @click="changeSize('stock')" :class="['iconfont', fullScreenStatus.stock ? 'icon-compress-alt' : 'icon-expand-alt']"></span>
-          </div>
-        </div>
-      </section>
+      </main>
     </div>
   </div>
 </template>
 
 <script>
-import Hot from '@/components/report/Hot.vue'
-import Map from '@/components/report/Map.vue'
-import Rank from '@/components/report/Rank.vue'
-import Seller from '@/components/report/Seller.vue'
-import Stock from '@/components/report/Stock.vue'
-import Trend from '@/components/report/Trend.vue'
+// 导入核心库
+import * as THREE from 'three';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import VanillaTilt from 'vanilla-tilt';
 
-import { mapState } from 'vuex'
-// 导入自己定义的主题工具函数 用于返回不同主题下的配置对象
-import { getThemeValue } from 'utils/theme_utils'
+// 导入图标库及所需图标
+import { OhVueIcon, addIcons } from 'oh-vue-icons';
+import {
+  CoMoney,
+  OiGitCompare,
+  BiGraphUp,
+  HiChartBar,
+  HiArrowRight
+} from 'oh-vue-icons/icons';
+
+// 注册 GSAP 插件
+gsap.registerPlugin(ScrollTrigger);
+
+// 添加所需图标
+addIcons(CoMoney, OiGitCompare, BiGraphUp, HiChartBar, HiArrowRight);
 
 export default {
-  name: 'ScreenPage',
+  name: 'Home',
   components: {
-    Hot,
-    'single-map': Map,
-    Rank,
-    Seller,
-    Stock,
-    Trend,
+    'v-icon': OhVueIcon
   },
   data() {
     return {
-      // 各组件是否全屏状态
-      fullScreenStatus: {
-        trend: false,
-        seller: false,
-        map: false,
-        rank: false,
-        hot: false,
-        stock: false,
-      },
-      // 当前的系统时间
-      systemDateTime: null,
-      // 用于保存当前系统日期的定时器id
-      timerID: null,
+      currentTime: '',
+      three_scene: null,
+      three_camera: null,
+      three_renderer: null,
+      three_particles: null
+    };
+  },
+  mounted() {
+    this.updateTime();
+    this.timeInterval = setInterval(this.updateTime, 1000);
+    
+    this.initThreeBg();
+    this.initScrollAnimations();
+    this.initTiltEffect();
+    
+    window.addEventListener('resize', this.onWindowResize);
+  },
+  beforeDestroy() {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
     }
-  },
-  created() {
-    // 注册服务端广播的全屏事件
-    // this.$socket.registerCallBack('fullScreen', this.recvData)
-    // // 注册服务器广播的主题切换事件
-    // this.$socket.registerCallBack('themeChange', this.recvThemeChange)
-    this.currentTime()
-  },
-  computed: {
-    ...mapState(['theme']),
-    // 头部的边框路径
-    headerSrc() {
-      return '/static/img/' + getThemeValue(this.theme).headerBorderSrc
-    },
-    // 主题图片的路径
-    themeSrc() {
-      return '/static/img/' + getThemeValue(this.theme).themeSrc
-    },
-    containerStyle() {
-      return {
-        backgroundColor: getThemeValue(this.theme).backgroundColor,
-        color: getThemeValue(this.theme).titleColor,
-      }
-    },
-    titleColor() {
-      return {
-        color: getThemeValue(this.theme).titleColor,
-      }
-    },
-  },
-  destroyed() {
-    // 组件销毁时，销毁事件
-    // this.$socket.unRegisterCallBack('fullScreen')
-    // this.$socket.unRegisterCallBack('themeChange')
-    clearInterval(this.timerID)
+    window.removeEventListener('resize', this.onWindowResize);
   },
   methods: {
-    // 监听全屏事件
-    changeSize(chartName) {
-      // 1.改变fullScreenStatus
-      this.fullScreenStatus[chartName] = !this.fullScreenStatus[chartName]
-      // 2.手动调用每个图表中的 screenAdapter 触发响应式
-      this.$nextTick(() => {
-        this.$refs[chartName].screenAdapter()
-      })
-
-      // 一端操作多端同步效果
-      // 将事件发送给服务端，让服务端广播事件 true全屏，false取消全屏
-      // const targetValue = !this.fullScreenStatus[chartName]
-      // this.$socket.send({
-      //   action: 'fullScreen',
-      //   socketType: 'fullScreen',
-      //   chartName: chartName,
-      //   value: targetValue,
-      // })
+    updateTime() {
+      const now = new Date();
+      this.currentTime = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
     },
-    // 服务端广播全屏事件的客户端响应
-    recvData(data) {
-      // 取出是那一个图表进行切换
-      const chartName = data.chartName
-      // 判断切换成什么类型[true全屏，false取消全屏]
-      const targetValue = data.value
 
-      this.fullScreenStatus[chartName] = targetValue
-      this.$nextTick(() => {
-        this.$refs[chartName].screenAdapter()
-      })
+    navigateToModule(module) {
+      console.log('导航到模块:', module); // 添加调试日志
+      this.$router.push(`/${module}`);
     },
-    // 主题切换事件
-    handleChangeTheme() {
-      this.$store.commit('changeTheme')
 
-      // this.$socket.send({
-      //   action: 'themeChange',
-      //   socketType: 'themeChange',
-      //   chartName: '',
-      //   value: '',
-      // })
+    initThreeBg() {
+      // Three.js 背景初始化
+      console.log('初始化Three.js背景');
     },
-    // 接收到服务器切换主题事件
-    // recvThemeChange() {
-    //   this.$store.commit('changeTheme')
-    // },
-    currentTime() {
-      this.systemDateTime = new Date().toLocaleString()
 
-      this.timerID && clearInterval(this.timerID)
+    initScrollAnimations() {
+      // 滚动动画初始化
+      console.log('初始化滚动动画');
+    },
 
-      this.timerID = setInterval(() => {
-        this.systemDateTime = new Date().toLocaleString()
-      }, 1000)
+    initTiltEffect() {
+      // 卡片倾斜效果初始化
+      console.log('初始化倾斜效果');
+    },
+
+    onWindowResize() {
+      // 窗口大小变化处理
+      console.log('窗口大小变化');
     },
   },
-}
+};
 </script>
-<style lang="less" scoped>
-// 全屏样式的定义
-.fullscreen {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  z-index: 9999;
-}
 
+<style lang="less" scoped>
+// --- 基础和布局 ---
 .screen-container {
   width: 100%;
-  height: 100%;
-  padding: 0 20px;
-  background-color: #161522;
-  color: #fff;
-  box-sizing: border-box;
-}
-.screen-header {
-  width: 100%;
-  height: 64px;
-  font-size: 20px;
+  min-height: 100vh;
+  background-color: #0c0a18;
+  color: #e0e0e0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   position: relative;
-  > div {
-    img {
-      width: 100%;
-    }
-  }
-  .title {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    font-size: 20px;
-    transform: translate(-50%, -50%);
-  }
-  .title-right {
+  overflow-x: hidden;
+}
+
+.background-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// --- 头部 ---
+.screen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  .header-left {
     display: flex;
     align-items: center;
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-80%);
+    gap: 1rem;
   }
-  .qiehuan {
-    width: 28px;
-    height: 21px;
-    cursor: pointer;
+
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
   }
+
+  .logo-subtext {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 300;
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
   .datetime {
-    font-size: 15px;
-    margin-left: 10px;
+    font-size: 1rem;
+    font-weight: 400;
   }
-  .logo {
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translateY(-80%);
-    a {
-      text-decoration: none;
+
+  .system-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.25rem;
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s infinite;
     }
   }
 }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px #4ade80; }
+  50% { opacity: 0.6; box-shadow: none; }
+}
+
+// --- Bento 网格布局 ---
 .screen-body {
   width: 100%;
-  height: 100%;
+  // 添加调试样式
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 400px;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  gap: 1.5rem;
+  // 添加调试样式
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  padding: 1rem;
+}
+
+// --- 单元格样式 ---
+.bento-cell {
+  position: relative;
+  border-radius: 20px;
+  background: rgba(23, 27, 46, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  // 移除初始透明度，确保内容可见
+  opacity: 1;
+  // 添加最小高度
+  min-height: 200px;
+}
+
+// 欢迎单元格特定样式
+.welcome-cell {
+  grid-column: span 2;
+  grid-row: span 2;
   display: flex;
-  margin-top: 10px;
-  .screen-left {
-    height: 100%;
-    width: 27.6%;
-    #left-top {
-      height: 53%;
-      position: relative;
-    }
-    #left-bottom {
-      height: 31%;
-      margin-top: 25px;
-      position: relative;
-    }
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+
+  .welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #a777e3, #615eff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .screen-middle {
-    height: 100%;
-    width: 41.5%;
-    margin-left: 1.6%;
-    margin-right: 1.6%;
-    #middle-top {
-      width: 100%;
-      height: 56%;
-      position: relative;
-    }
-    #middle-bottom {
-      margin-top: 25px;
-      width: 100%;
-      height: 28%;
-      position: relative;
-    }
+
+  .welcome-description {
+    font-size: 1.1rem;
+    color: #a0a0a0;
+    margin-bottom: 2rem;
+    max-width: 80%;
   }
-  .screen-right {
-    height: 100%;
-    width: 27.6%;
-    #right-top {
-      height: 46%;
-      position: relative;
-    }
-    #right-bottom {
-      height: 38%;
-      margin-top: 25px;
-      position: relative;
+
+  .research-stats {
+    display: flex;
+    gap: 3rem;
+    
+    .stat-item {
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #615eff;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        color: #888;
+        margin-top: 0.5rem;
+      }
     }
   }
 }
-.resize {
-  position: absolute;
-  right: 20px;
-  top: 20px;
+
+// --- 模块卡片样式 ---
+.module-card {
+  grid-column: span 2;
   cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(97, 94, 255, 0.3);
+    
+    .card-glow {
+      opacity: 1;
+    }
+    
+    .enter-btn {
+      background: #615eff;
+      color: #fff;
+    }
+  }
+
+  .card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+    background: radial-gradient(circle at 50% 50%, rgba(97, 94, 255, 0.2), transparent 70%);
+  }
+
+  .card-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .module-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+
+    &.profit-icon { background: linear-gradient(135deg, #a777e3, #615eff); }
+    &.kmeans-icon { background: linear-gradient(135deg, #5ee7df, #b490ca); }
+    &.prophet-icon { background: linear-gradient(135deg, #ffc371, #ff5f6d); }
+    &.heatmap-icon { background: linear-gradient(135deg, #c2e59c, #64b3f4); }
+  }
+
+  .module-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .module-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+  }
+  
+  .module-desc {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .method-tags {
+    display: flex;
+    gap: 0.5rem;
+    
+    span {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: #ccc;
+    }
+  }
+
+  .enter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+}
+
+// --- 响应式设计 ---
+@media (max-width: 1200px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .welcome-cell {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .module-card {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper { 
+    padding: 1rem; 
+  }
+  
+  .screen-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .welcome-cell, .module-card {
+    grid-column: span 1;
+  }
+  
+  .welcome-cell {
+    .welcome-title { 
+      font-size: 2rem; 
+    }
+    .welcome-description { 
+      max-width: 100%; 
+    }
+  }
 }
 </style>

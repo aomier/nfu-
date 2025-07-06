@@ -1,61 +1,61 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
-// 懒加载路由
-// const Home = () => import( /* webpackChunkName: "data-views" */ "views/Home")
-// const SellerPage = () => import( /* webpackChunkName: "data-views" */ "views/SellerPage")
-// const TrendPage = () => import( /* webpackChunkName: "data-views" */ "views/TrendPage")
-// const MapPage = () => import( /* webpackChunkName: "data-views" */ "views/MapPage")
-// const RankPage = () => import( /* webpackChunkName: "data-views" */ "views/RankPage")
-// const HotPage = () => import( /* webpackChunkName: "data-views" */ "views/HotPage")
-// const StockPage = () => import( /* webpackChunkName: "data-views" */ "views/StockPage")
-
-// 普通方式
-import Home from "views/Home"
-import SellerPage from 'views/SellerPage'
-import TrendPage from 'views/TrendPage'
-import MapPage from 'views/MapPage'
-import RankPage from 'views/RankPage'
-import HotPage from 'views/HotPage'
-import StockPage from 'views/StockPage'
+import Home from '../views/Home.vue'  // 🔍 检查这个文件是否存在
 
 Vue.use(VueRouter)
 
-const routes = [{
+const routes = [
+  {
     path: '/',
-    redirect: '/home'
+    name: 'Home',
+    component: Home  // 🔍 确保这个组件存在
   },
   {
-    path: '/home',
-    component: Home
+    path: '/prophet',
+    name: 'ProphetForecast', 
+    component: () => import('../views/ProphetForecast.vue'),
+    meta: {
+      title: 'Prophet时间序列预测'
+    }
   },
   {
-    path: '/sellerpage',
-    component: SellerPage
+    path: '/kmeans',
+    name: 'KmeansResults',
+    component: () => import('../views/KmeansResults.vue'),
+    meta: {
+      title: 'K聚类分析'
+    }
   },
   {
-    path: '/trendpage',
-    component: TrendPage
+    path: '/kmeans-results',
+    name: 'KmeansResultsPage',
+    component: () => import('../views/KmeansResults.vue'),
+    meta: {
+      title: 'K聚类分析结果'
+    }
   },
   {
-    path: '/mappage',
-    component: MapPage
+    path: '/profit',
+    name: 'Profit',
+    component: () => import('../views/AnalysisResults.vue'),
+    meta: {
+      title: '利润分析结果'
+    }
   },
   {
-    path: '/hotpage',
-    component: HotPage
-  },
-  {
-    path: '/stockpage',
-    component: StockPage
-  },
-  {
-    path: '/rankpage',
-    component: RankPage
+    path: '/heatmap',
+    name: 'HeatmapAnalysis',
+    component: () => import('../views/HeatmapAnalysis.vue'),
+    meta: {
+      title: '热力图相关性分析',
+      description: '深度挖掘业务因素间的关联关系'
+    }
   }
 ]
 
 const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
   routes
 })
 
