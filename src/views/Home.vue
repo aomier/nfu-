@@ -158,21 +158,22 @@
 </template>
 
 <script>
+// FIX: Changed import statements to require to avoid module parsing errors in some environments.
 // 导入核心库
-import * as THREE from 'three';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import VanillaTilt from 'vanilla-tilt';
+const THREE = require('three');
+const { gsap } = require('gsap');
+const { ScrollTrigger } = require('gsap/ScrollTrigger');
+const VanillaTilt = require('vanilla-tilt');
 
 // 导入图标库及所需图标
-import { OhVueIcon, addIcons } from 'oh-vue-icons';
-import {
+const { OhVueIcon, addIcons } = require('oh-vue-icons');
+const {
   CoMoney,
   OiGitCompare,
   BiGraphUp,
   HiChartBar,
   HiArrowRight
-} from 'oh-vue-icons/icons';
+} = require('oh-vue-icons/icons');
 
 // 注册 GSAP 插件
 gsap.registerPlugin(ScrollTrigger);
@@ -252,6 +253,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/* * FIX: Added universal box-sizing to prevent layout overflow issues.
+  * This ensures padding and borders are included in the element's total width and height.
+*/
+* {
+  box-sizing: border-box;
+}
+
 // --- 基础和布局 ---
 .screen-container {
   width: 100%;
