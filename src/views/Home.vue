@@ -354,7 +354,8 @@ export default {
 
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* FIX: Changed grid to 3 columns to fit all cards on the screen. */
+  grid-template-columns: repeat(3, 1fr);
   grid-template-rows: auto;
   gap: 1.5rem;
   // 添加调试样式
@@ -379,7 +380,8 @@ export default {
 
 // 欢迎单元格特定样式
 .welcome-cell {
-  grid-column: span 2;
+  /* FIX: Adjusted welcome cell to span 1 column. */
+  grid-column: span 1;
   grid-row: span 2;
   display: flex;
   flex-direction: column;
@@ -425,7 +427,8 @@ export default {
 
 // --- 模块卡片样式 ---
 .module-card {
-  grid-column: span 2;
+  /* FIX: Adjusted module card to span 1 column. */
+  grid-column: span 1;
   cursor: pointer;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
