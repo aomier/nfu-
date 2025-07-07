@@ -6,8 +6,8 @@
       <!-- 头部 -->
       <header class="screen-header">
         <div class="header-left">
-          <span class="logo-text">智能数据分析平台</span>
-          <span class="logo-subtext">Intelligent Data Analytics</span>
+          <span class="logo-text">虾皮数据分析平台</span>
+          <span class="logo-subtext">虾皮不皮团队制作</span>
         </div>
         <div class="header-right">
           <div class="datetime">{{ currentTime }}</div>
@@ -29,11 +29,11 @@
             </p>
             <div class="research-stats">
               <div class="stat-item">
-                <div class="stat-number">150+</div>
+                <div class="stat-number">4</div>
                 <div class="stat-label">分析模型</div>
               </div>
               <div class="stat-item">
-                <div class="stat-number">99.5%</div>
+                <div class="stat-number">97.5%</div>
                 <div class="stat-label">准确率</div>
               </div>
               <div class="stat-item">
