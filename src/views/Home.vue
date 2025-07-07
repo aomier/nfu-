@@ -158,7 +158,6 @@
 </template>
 
 <script>
-// FIX: Changed import statements to require to avoid module parsing errors in some environments.
 // 导入核心库
 const THREE = require('three');
 const { gsap } = require('gsap');
@@ -253,13 +252,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/* * FIX: Added universal box-sizing to prevent layout overflow issues.
-  * This ensures padding and borders are included in the element's total width and height.
-*/
-* {
-  box-sizing: border-box;
-}
-
 // --- 基础和布局 ---
 .screen-container {
   width: 100%;
@@ -287,6 +279,9 @@ export default {
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+  /* FIX: Explicitly set width and box-sizing to ensure the container respects its parent's boundaries. */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 // --- 头部 ---
