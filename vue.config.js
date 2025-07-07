@@ -1,11 +1,17 @@
 module.exports = {
-  publicPath: '/vue2/data-view', // 根据情况自行修改
-  // publicPath: '/',
-  outputDir: 'data-view',
+  // Set the public path to the root for Vercel deployment
+  // This ensures that assets are loaded correctly.
+  publicPath: '/',
+
+  // Use the default output directory 'dist', which Vercel expects.
+  // We can comment this out or remove it to use the default.
+  // outputDir: 'dist',
+
   devServer: {
-    port: 8999, //端口号
-    open: true, //自动打开浏览器
+    port: 8999, // Port for local development
+    open: true, // Automatically open the browser
   },
+
   configureWebpack: {
     resolve: {
       alias: {
@@ -19,13 +25,14 @@ module.exports = {
       },
     },
   },
+
   chainWebpack: config => {
-    // 发布模式
+    // Production mode settings
     config.when(process.env.NODE_ENV === 'production', cofnig => {
-      // 根据当前是什么模式 来判断使用那个 入口文件
+      // Use the production entry point
       config.entry('app').clear().add('./src/main-prod.js')
 
-      //  打包时排除指定包 手动添加 CDN
+      // Exclude packages from the bundle to be loaded from a CDN
       config.set('externals', {
         vue: 'Vue',
         'vue-router': 'VueRouter',
@@ -33,20 +40,22 @@ module.exports = {
         lodash: '_',
         echarts: 'echarts',
       })
-      // 在 public下的 index.html 中可以通过 以下命令拿到当前设置的值
-      // <%= htmlWebpackPlugin.options.isProd ? '' : 'dev-'%>
+
+      // Set a flag for the production environment in index.html
       config.plugin('html').tap(args => {
         args[0].isProd = true
         return args
       })
     })
 
-    // 开发模式
+    // Development mode settings
     config.when(process.env.NODE_ENV === 'development', cofnig => {
+      // Set a flag for the development environment in index.html
       config.plugin('html').tap(args => {
         args[0].isProd = false
         return args
       })
+      // Use the development entry point
       config.entry('app').clear().add('./src/main-dev.js')
     })
   },
