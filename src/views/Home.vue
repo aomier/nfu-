@@ -3,7 +3,6 @@
     <canvas ref="backgroundCanvas" class="background-canvas"></canvas>
     
     <div class="content-wrapper">
-      <!-- 头部 -->
       <header class="screen-header">
         <div class="header-left">
           <span class="logo-text">虾皮数据分析平台</span>
@@ -17,11 +16,8 @@
           </div>
         </div>
       </header>
-
-      <!-- 主体内容 - 确保这部分存在 -->
       <main class="screen-body">
         <div class="bento-grid">
-          <!-- 欢迎卡片 -->
           <div class="bento-cell welcome-cell">
             <h1 class="welcome-title">数据驱动决策</h1>
             <p class="welcome-description">
@@ -43,9 +39,7 @@
             </div>
           </div>
 
-          <!-- 盈利能力分析卡片 -->
           <div class="bento-cell module-card" @click="navigateToModule('profit')">
-            <!-- 确保这里的参数是 'profit' -->
             <div class="card-glow"></div>
             <div class="card-content">
               <div class="card-header">
@@ -71,7 +65,6 @@
             </div>
           </div>
 
-          <!-- K-means聚类 -->
           <div class="bento-cell module-card" @click="navigateToModule('kmeans')">
             <div class="card-glow"></div>
             <div class="card-content">
@@ -98,7 +91,6 @@
             </div>
           </div>
 
-          <!-- Prophet预测 -->
           <div class="bento-cell module-card" @click="navigateToModule('prophet')">
             <div class="card-glow"></div>
             <div class="card-content">
@@ -125,7 +117,6 @@
             </div>
           </div>
 
-          <!-- 热力图分析 -->
           <div class="bento-cell module-card" @click="navigateToModule('heatmap')">
             <div class="card-glow"></div>
             <div class="card-content">
@@ -354,8 +345,8 @@ export default {
 
 .bento-grid {
   display: grid;
-  /* FIX: Changed grid to 3 columns to fit all cards on the screen. */
-  grid-template-columns: repeat(3, 1fr);
+  /* FIX: Changed to a 2-column layout to match the local version. */
+  grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto;
   gap: 1.5rem;
   // 添加调试样式
@@ -380,7 +371,7 @@ export default {
 
 // 欢迎单元格特定样式
 .welcome-cell {
-  /* FIX: Adjusted welcome cell to span 1 column. */
+  /* FIX: Adjusted welcome cell to span 1 column and 2 rows for the desired layout. */
   grid-column: span 1;
   grid-row: span 2;
   display: flex;
