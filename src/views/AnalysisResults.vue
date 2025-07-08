@@ -1865,4 +1865,20 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: rgba(0, 191, 255, 0.08);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00bfff88;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 </style>
