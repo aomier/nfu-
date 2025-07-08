@@ -1865,7 +1865,7 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
-
+<style lang="less" scoped>
 .table-content, .screen-body, .ai-card-content {
   overflow-y: auto;
   scrollbar-width: thin;
