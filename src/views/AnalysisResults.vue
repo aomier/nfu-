@@ -341,7 +341,7 @@
             
             <div v-else-if="aiResult" class="ai-result">
               <div class="ai-result-content" ref="aiResultRef">
-                <div class="streaming-text">{{ displayedResult }}<span class="cursor" v-if="isTyping">|</span></div>
+                <div class="streaming-text" v-html="streamingHtml"><span class="cursor" v-if="isTyping">|</span></div>
               </div>
             </div>
             
@@ -485,6 +485,13 @@ export default {
         .replace(/\n/g, '<br>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // 处理粗体
         .replace(/\*(.*?)\*/g, '<em>$1</em>'); // 处理斜体
+    },
+    
+    streamingHtml() {
+      // 关键词高亮
+      let html = this.displayedResult
+        .replace(/(增长|下降|优化|风险|机会|建议|结论|分析)/g, '<span class="ai-blue">$1</span>');
+      return html;
     }
   },
   mounted() {
@@ -1047,26 +1054,39 @@ export default {
         this.aiResult = '';
         this.displayedResult = '';
         this.isTyping = false;
-        
-        const prompt = `请分析以下数据：
-- 总利润：¥1,250,000 (+12.5%)
-- 总销售额：¥8,500,000 (+8.3%)
-- 平均利润率：28.0% (-2.1%)
+
+        // 预设词与格式优化
+        const preset = `
+【分析要求】
+1. 以专业数据分析师身份，使用简洁有逻辑的语言输出。
+2. 结构化输出：先给出结论摘要，再分点详细分析，最后给出可执行建议。
+3. 重点用“蓝色高亮”词语（如增长、下降、优化、风险、机会等）。
+
+【数据概览】
+- 总利润：¥1,250,000（+12.5%）
+- 总销售额：¥8,500,000（+8.3%）
+- 平均利润率：28.0%（-2.1%）
 - 商品数量：5,000
 
-请提供3点优化建议，要求简洁明了。`;
-        
-        console.log('🚀 开始流式AI分析...');
-        this.isTyping = true;
-        
-        // 使用流式API
-        await getAIAnalysisStream(prompt, (newText, fullContent) => {
+【输出格式】
+【结论摘要】
+...
+【详细分析】
+1.
+2.
+3.
+【优化建议】
+- 
+- 
+- 
+`;
+
+        await getAIAnalysisStream(preset, (newText, fullContent) => {
           this.aiResult = fullContent;
           this.typewriterEffect();
         });
-        
+
       } catch (error) {
-        console.error('💥 AI分析失败:', error);
         this.aiError = error.message || '分析失败，请稍后重试';
         this.isTyping = false;
       } finally {
@@ -1720,15 +1740,22 @@ export default {
         
         .ai-result-content {
           .streaming-text {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-            line-height: 1.8;
+            color: #fff;
+            font-family: 'Orbitron', 'Consolas', 'Segoe UI', 'Arial', sans-serif;
+            font-size: 18px;
+            line-height: 1.9;
             white-space: pre-wrap;
-            
-            .cursor {
-              color: #667eea;
-              animation: blink 1s infinite;
-            }
+            text-shadow:
+              0 0 8px #00bfff,
+              0 0 16px #00bfff,
+              0 0 32px #00bfff,
+              0 0 2px #fff;
+            letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #00bfff33 0%, #1e90ff11 100%);
+            border-radius: 8px;
+            padding: 18px 24px;
+            box-shadow: 0 0 24px #00bfff44;
+            transition: background 0.3s;
           }
         }
       }
@@ -1831,5 +1858,11 @@ export default {
       }
     }
   }
+}
+
+.ai-blue {
+  color: #00bfff;
+  font-weight: bold;
+  text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
 </style>
