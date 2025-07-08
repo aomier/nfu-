@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: '/vue2/data-view', // 根据情况自行修改
+  publicPath: './', // 根据情况自行修改
   //publicPath: '/',
   outputDir: 'dist',
   devServer: {
