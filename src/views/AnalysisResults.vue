@@ -1865,20 +1865,30 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
+<style scoped>
+/* 美化滚动条：表格、图表区、AI分析卡片 */
+.table-content, .screen-body, .ai-card-content {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4294ff #18263a;
+}
 
-::-webkit-scrollbar {
-  width: 10px;
-  background: rgba(0, 191, 255, 0.08);
+.table-content::-webkit-scrollbar,
+.screen-body::-webkit-scrollbar,
+.ai-card-content::-webkit-scrollbar {
+  width: 8px;
+  background: #18263a;
+  border-radius: 4px;
 }
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
-  border-radius: 8px;
-  box-shadow: 0 0 8px #00bfff88;
+.table-content::-webkit-scrollbar-thumb,
+.screen-body::-webkit-scrollbar-thumb,
+.ai-card-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4294ff 0%, #1858c9 100%);
+  border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
-}
-::-webkit-scrollbar-corner {
-  background: transparent;
+.table-content::-webkit-scrollbar-thumb:hover,
+.screen-body::-webkit-scrollbar-thumb:hover,
+.ai-card-content::-webkit-scrollbar-thumb:hover {
+  background: #2979ff;
 }
 </style>
