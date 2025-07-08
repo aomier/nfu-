@@ -338,9 +338,19 @@ export default {
 // --- Bento 网格布局 ---
 .screen-body {
   width: 100%;
-  // 添加调试样式
-  border: 1px solid rgba(255, 255, 255, 0.1);
   min-height: 400px;
+  max-height: calc(100vh - 120px); // 120px可根据header+padding实际高度调整
+  overflow-y: auto;                // 关键！出现纵向滚动条
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  // 可选：美化滚动条
+  &::-webkit-scrollbar {
+    width: 8px;
+    background: rgba(255,255,255,0.05);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #615eff;
+    border-radius: 4px;
+  }
 }
 
 .bento-grid {
