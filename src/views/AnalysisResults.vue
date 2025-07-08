@@ -32,6 +32,9 @@
           <el-button @click="shareResults" icon="el-icon-share" type="success" size="small">
             分享结果
           </el-button>
+          <el-button @click="showAiAnalysis" icon="el-icon-cpu" type="info" size="small" class="ai-analysis-btn">
+            <i class="ai-icon">🤖</i> AI分析
+          </el-button>
         </div>
       </div>
 
@@ -288,6 +291,68 @@
           </div>
         </div>
       </div>
+
+      <!-- AI分析卡片 -->
+      <div class="ai-analysis-card" v-if="showAiCard" @click.self="showAiCard = false">
+        <div class="ai-card-container" @click.stop>
+          <div class="ai-card-header">
+            <div class="ai-title">
+              <div class="ai-avatar">🤖</div>
+              <div class="ai-title-text">
+                <h3>AI智能分析</h3>
+                <p>基于您的数据生成专业洞察</p>
+              </div>
+            </div>
+            <div class="ai-actions">
+              <button 
+                class="ai-btn refresh-btn" 
+                @click="generateAiAnalysis" 
+                :disabled="aiLoading" 
+                title="重新分析"
+              >
+                <span class="btn-icon" :class="{'spinning': aiLoading}">🔄</span>
+              </button>
+              <button 
+                class="ai-btn close-btn" 
+                @click="showAiCard = false" 
+                title="关闭分析"
+              >
+                <span class="btn-icon">✕</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="ai-card-content">
+            <div v-if="aiLoading" class="ai-loading">
+              <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+              </div>
+              <p class="ai-status-text">AI正在思考中...</p>
+            </div>
+            
+            <div v-else-if="aiError" class="ai-error">
+              <div class="error-icon">⚠️</div>
+              <h4>分析失败</h4>
+              <p>{{ aiError }}</p>
+              <button class="retry-btn" @click="generateAiAnalysis">重新分析</button>
+            </div>
+            
+            <div v-else-if="aiResult" class="ai-result">
+              <div class="ai-result-content" ref="aiResultRef">
+                <div class="streaming-text">{{ displayedResult }}<span class="cursor" v-if="isTyping">|</span></div>
+              </div>
+            </div>
+            
+            <div v-else class="ai-welcome">
+              <div class="welcome-icon">✨</div>
+              <h4>准备开始分析</h4>
+              <p>点击刷新按钮开始AI分析</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -296,6 +361,8 @@
 import * as echarts from 'echarts'
 import { mapState } from 'vuex'
 import { getThemeValue } from '@/utils/theme_utils'
+import { getAIAnalysis } from '@/services/aiService' // 导入AI服务
+import { getAIAnalysisStream } from '@/services/aiService'
 
 export default {
   name: 'AnalysisResults',
@@ -322,7 +389,16 @@ export default {
       },
       loading: true,
       error: null,
-      localData: null
+      localData: null,
+      
+      // 新增AI分析相关属性
+      showAiCard: false,
+      aiLoading: false,
+      aiResult: '',
+      aiError: null,
+      displayedResult: '',
+      isTyping: false,
+      typingSpeed: 50 // 打字机效果速度（毫秒）
     }
   },
   computed: {
@@ -397,6 +473,18 @@ export default {
     
     estimatedImprovement() {
       return (Math.random() * 15 + 5).toFixed(1)
+    },
+    
+    // 新增计算属性
+    formattedAiResult() {
+      if (!this.aiResult) return '';
+      
+      // 将文本中的换行符转换为HTML标签
+      return this.aiResult
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // 处理粗体
+        .replace(/\*(.*?)\*/g, '<em>$1</em>'); // 处理斜体
     }
   },
   mounted() {
@@ -490,6 +578,11 @@ export default {
           }
         ]
       }
+      
+      // 添加点击事件
+      chart.on('click', (params) => {
+        this.handleChartClick('品类利润分布', params);
+      });
       
       chart.setOption(option)
     },
@@ -586,6 +679,11 @@ export default {
         ]
       }
       
+      // 添加点击事件
+      chart.on('click', (params) => {
+        this.handleChartClick('价格敏感度分析', params);
+      });
+      
       chart.setOption(option)
     },
     
@@ -656,6 +754,11 @@ export default {
           }
         ]
       }
+      
+      // 添加点击事件
+      chart.on('click', (params) => {
+        this.handleChartClick('ROI指数排行', params);
+      });
       
       chart.setOption(option)
     },
@@ -757,6 +860,11 @@ export default {
           }
         ]
       }
+      
+      // 添加点击事件
+      chart.on('click', (params) => {
+        this.handleChartClick('销量与利润关系分析', params);
+      });
       
       chart.setOption(option)
     },
@@ -878,6 +986,103 @@ export default {
             单价: 500
           }
         }
+      }
+    },
+    
+    // 新增方法 - 显示整体AI分析
+    showAiAnalysis() {
+      this.showAiCard = true;
+      this.aiResult = '';
+      this.aiError = null;
+      this.generateAiAnalysis();
+    },
+    
+    // 新增方法 - 处理图表点击事件
+    handleChartClick(chartName, params) {
+      this.showAiCard = true;
+      this.aiResult = '';
+      
+      // 生成AI分析，传入图表点击的详细信息
+      this.generateAiAnalysis(chartName, params);
+    },
+    
+    // 新增方法 - 生成AI分析
+    async generateAiAnalysis(chartName, params) {
+      try {
+        this.aiLoading = true;
+        this.aiError = null;
+        
+        // 构建简化的提示词
+        let prompt = `作为数据分析专家，请基于以下数据进行分析并提供具体建议：\n\n`;
+        
+        // 添加基本数据信息
+        prompt += `- 总利润：¥${this.formatNumber(this.data?.summary?.total_profit || 0)}\n`;
+        prompt += `- 总销售额：¥${this.formatNumber(this.data?.summary?.total_revenue || 0)}\n`;
+        prompt += `- 平均利润率：${((this.data?.summary?.avg_profit_margin || 0) * 100).toFixed(1)}%\n`;
+        
+        if (chartName && params) {
+          prompt += `\n用户点击了【${chartName}】图表中的数据：${params.name || '未命名'}\n`;
+        }
+        
+        prompt += `\n请给出数据分析和3点具体可行的优化建议。回答控制在150字以内。`;
+        
+        console.log("发送AI请求");
+        
+        // 调用API获取分析结果
+        const result = await getAIAnalysis(prompt);
+        this.aiResult = result;
+        console.log("AI分析结果已更新");
+      } catch (error) {
+        console.error('AI分析生成失败:', error);
+        this.aiError = error.message || '生成分析失败，请稍后重试';
+      } finally {
+        this.aiLoading = false;
+      }
+    },
+    
+    async generateAiAnalysis() {
+      try {
+        this.aiLoading = true;
+        this.aiError = null;
+        this.aiResult = '';
+        this.displayedResult = '';
+        this.isTyping = false;
+        
+        const prompt = `请分析以下数据：
+- 总利润：¥1,250,000 (+12.5%)
+- 总销售额：¥8,500,000 (+8.3%)
+- 平均利润率：28.0% (-2.1%)
+- 商品数量：5,000
+
+请提供3点优化建议，要求简洁明了。`;
+        
+        console.log('🚀 开始流式AI分析...');
+        this.isTyping = true;
+        
+        // 使用流式API
+        await getAIAnalysisStream(prompt, (newText, fullContent) => {
+          this.aiResult = fullContent;
+          this.typewriterEffect();
+        });
+        
+      } catch (error) {
+        console.error('💥 AI分析失败:', error);
+        this.aiError = error.message || '分析失败，请稍后重试';
+        this.isTyping = false;
+      } finally {
+        this.aiLoading = false;
+      }
+    },
+    
+    // 打字机效果
+    typewriterEffect() {
+      if (this.displayedResult.length < this.aiResult.length) {
+        this.displayedResult = this.aiResult.substring(0, this.displayedResult.length + 1);
+        setTimeout(() => {
+          this.typewriterEffect();
+        }, this.typingSpeed);
+      } else {
+        this.isTyping = false;
       }
     }
   }
@@ -1205,7 +1410,7 @@ export default {
   }
 }
 
-/* 添加加载和错误状态的样式 */
+// 添加加载和错误状态的样式
 .loading-container, .error-container {
   display: flex;
   flex-direction: column;
@@ -1286,6 +1491,342 @@ export default {
         .el-input, .el-select {
           width: 100% !important;
           margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+// AI分析按钮样式
+.ai-analysis-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  
+  .ai-icon {
+    margin-right: 4px;
+    font-size: 14px;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+}
+
+// AI分析卡片样式
+.ai-analysis-card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+  
+  .ai-card-container {
+    width: 800px;
+    max-width: 90vw;
+    max-height: 80vh;
+    background: linear-gradient(145deg, #1e2a3a 0%, #2a3441 100%);
+    border-radius: 20px;
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    
+    .ai-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      
+      .ai-title {
+        display: flex;
+        align-items: center;
+        
+        .ai-avatar {
+          width: 48px;
+          height: 48px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          margin-right: 16px;
+          backdrop-filter: blur(10px);
+        }
+        
+        .ai-title-text {
+          h3 {
+            margin: 0;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.2;
+          }
+          
+          p {
+            margin: 4px 0 0 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+          }
+        }
+      }
+      
+      .ai-actions {
+        display: flex;
+        gap: 12px;
+        
+        .ai-btn {
+          width: 40px;
+          height: 40px;
+          border: none;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          transition: all 0.2s ease;
+          backdrop-filter: blur(10px);
+          
+          .btn-icon {
+            font-size: 18px;
+            line-height: 1;
+            transition: transform 0.3s ease;
+            
+            &.spinning {
+              animation: spin 1s linear infinite;
+            }
+          }
+          
+          &.refresh-btn:hover .btn-icon:not(.spinning) {
+            transform: rotate(180deg);
+          }
+          
+          &.close-btn:hover .btn-icon {
+            transform: scale(1.2);
+          }
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+          }
+          
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+          }
+        }
+      }
+    }
+    
+    .ai-card-content {
+      height: 500px;
+      overflow-y: auto;
+      
+      .ai-loading {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        
+        .typing-indicator {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 20px;
+          
+          .typing-dot {
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+            
+            &:nth-child(1) { animation-delay: -0.32s; }
+            &:nth-child(2) { animation-delay: -0.16s; }
+            &:nth-child(3) { animation-delay: 0s; }
+          }
+        }
+        
+        .ai-status-text {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 16px;
+          margin: 0;
+        }
+      }
+      
+      .ai-error {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        padding: 0 40px;
+        text-align: center;
+        
+        .error-icon {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+        
+        h4 {
+          color: #ff6b6b;
+          margin: 0 0 12px 0;
+          font-size: 20px;
+        }
+        
+        p {
+          color: rgba(255, 255, 255, 0.7);
+          margin: 0 0 24px 0;
+          line-height: 1.6;
+        }
+        
+        .retry-btn {
+          padding: 12px 24px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          border-radius: 10px;
+          color: white;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          }
+        }
+      }
+      
+      .ai-result {
+        padding: 32px;
+        
+        .ai-result-content {
+          .streaming-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            
+            .cursor {
+              color: #667eea;
+              animation: blink 1s infinite;
+            }
+          }
+        }
+      }
+      
+      .ai-welcome {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        
+        .welcome-icon {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+        
+        h4 {
+          color: white;
+          margin: 0 0 12px 0;
+          font-size: 20px;
+        }
+        
+        p {
+          color: rgba(255, 255, 255, 0.7);
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+// 动画定义
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
+}
+
+@keyframes typing {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .ai-analysis-card {
+    .ai-card-container {
+      width: 95vw;
+      max-height: 85vh;
+      border-radius: 16px;
+      
+      .ai-card-header {
+        padding: 20px;
+        
+        .ai-title {
+          .ai-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            margin-right: 12px;
+          }
+          
+          .ai-title-text h3 {
+            font-size: 18px;
+          }
+        }
+      }
+      
+      .ai-card-content {
+        height: calc(85vh - 100px);
+        
+        .ai-result {
+          padding: 20px;
+          
+          .streaming-text {
+            font-size: 14px;
+          }
         }
       }
     }
