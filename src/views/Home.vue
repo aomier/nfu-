@@ -267,7 +267,7 @@ export default {
 .content-wrapper {
   position: relative;
   z-index: 2;
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 1400px;
   margin: 0 auto;
   /* FIX: Explicitly set width and box-sizing to ensure the container respects its parent's boundaries. */
