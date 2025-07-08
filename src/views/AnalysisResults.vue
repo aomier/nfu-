@@ -1464,7 +1464,46 @@ export default {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+/* 自定义滚动条样式，适配所有滚动区域 */
+.ai-card-content,
+.insight-content,
+.table-content,
+[data-v]::-webkit-scrollbar, /* 兼容 scoped */
+::-webkit-scrollbar {
+  width: 10px;
+  background: rgba(0, 191, 255, 0.08);
+}
+.ai-card-content::-webkit-scrollbar-thumb,
+.insight-content::-webkit-scrollbar-thumb,
+.table-content::-webkit-scrollbar-thumb,
+[data-v]::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00bfff88;
+  transition: background 0.3s;
+}
+.ai-card-content::-webkit-scrollbar-thumb:hover,
+.insight-content::-webkit-scrollbar-thumb:hover,
+.table-content::-webkit-scrollbar-thumb:hover,
+[data-v]::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+}
+.ai-card-content::-webkit-scrollbar-corner,
+.insight-content::-webkit-scrollbar-corner,
+.table-content::-webkit-scrollbar-corner,
+[data-v]::-webkit-scrollbar-corner,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
+/* 滚动动画（可选） */
+.ai-card-content,
+.insight-content,
+.table-content {
+  scroll-behavior: smooth;
+}
 // 响应式设计
 @media (max-width: 1200px) {
   .screen-body {
@@ -1865,29 +1904,5 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
-<style lang="less" scoped>
-.table-content, .screen-body, .ai-card-content {
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #4294ff #18263a;
-}
 
-.table-content::-webkit-scrollbar,
-.screen-body::-webkit-scrollbar,
-.ai-card-content::-webkit-scrollbar {
-  width: 8px;
-  background: #18263a;
-  border-radius: 4px;
-}
-.table-content::-webkit-scrollbar-thumb,
-.screen-body::-webkit-scrollbar-thumb,
-.ai-card-content::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #4294ff 0%, #1858c9 100%);
-  border-radius: 4px;
-}
-.table-content::-webkit-scrollbar-thumb:hover,
-.screen-body::-webkit-scrollbar-thumb:hover,
-.ai-card-content::-webkit-scrollbar-thumb:hover {
-  background: #2979ff;
-}
 </style>
