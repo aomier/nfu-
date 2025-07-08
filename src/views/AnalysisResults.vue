@@ -1464,46 +1464,7 @@ export default {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-/* 自定义滚动条样式，适配所有滚动区域 */
-.ai-card-content,
-.insight-content,
-.table-content,
-[data-v]::-webkit-scrollbar, /* 兼容 scoped */
-::-webkit-scrollbar {
-  width: 10px;
-  background: rgba(0, 191, 255, 0.08);
-}
-.ai-card-content::-webkit-scrollbar-thumb,
-.insight-content::-webkit-scrollbar-thumb,
-.table-content::-webkit-scrollbar-thumb,
-[data-v]::-webkit-scrollbar-thumb,
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
-  border-radius: 8px;
-  box-shadow: 0 0 8px #00bfff88;
-  transition: background 0.3s;
-}
-.ai-card-content::-webkit-scrollbar-thumb:hover,
-.insight-content::-webkit-scrollbar-thumb:hover,
-.table-content::-webkit-scrollbar-thumb:hover,
-[data-v]::-webkit-scrollbar-thumb:hover,
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
-}
-.ai-card-content::-webkit-scrollbar-corner,
-.insight-content::-webkit-scrollbar-corner,
-.table-content::-webkit-scrollbar-corner,
-[data-v]::-webkit-scrollbar-corner,
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
 
-/* 滚动动画（可选） */
-.ai-card-content,
-.insight-content,
-.table-content {
-  scroll-behavior: smooth;
-}
 // 响应式设计
 @media (max-width: 1200px) {
   .screen-body {
@@ -1899,10 +1860,60 @@ export default {
   }
 }
 
+/* 统一美化所有滚动区域的滚动条 */
+.ai-card-content,
+.insight-content,
+.table-content,
+.el-table__body-wrapper,
+body,
+html {
+  /* 让这些区域都能显示滚动条 */
+  scrollbar-width: thin;
+  scrollbar-color: #00bfff #0A1929;
+  scroll-behavior: smooth;
+}
+
+/* Webkit 滚动条美化 */
+.ai-card-content::-webkit-scrollbar,
+.insight-content::-webkit-scrollbar,
+.table-content::-webkit-scrollbar,
+.el-table__body-wrapper::-webkit-scrollbar,
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  width: 10px;
+  background: rgba(0, 191, 255, 0.08);
+}
+.ai-card-content::-webkit-scrollbar-thumb,
+.insight-content::-webkit-scrollbar-thumb,
+.table-content::-webkit-scrollbar-thumb,
+.el-table__body-wrapper::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #00bfff 0%, #1e90ff 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00bfff88;
+  transition: background 0.3s;
+}
+.ai-card-content::-webkit-scrollbar-thumb:hover,
+.insight-content::-webkit-scrollbar-thumb:hover,
+.table-content::-webkit-scrollbar-thumb:hover,
+.el-table__body-wrapper::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);
+}
+.ai-card-content::-webkit-scrollbar-corner,
+.insight-content::-webkit-scrollbar-corner,
+.table-content::-webkit-scrollbar-corner,
+.el-table__body-wrapper::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 .ai-blue {
   color: #00bfff;
   font-weight: bold;
   text-shadow: 0 0 8px #00bfff, 0 0 2px #fff;
 }
-
 </style>
