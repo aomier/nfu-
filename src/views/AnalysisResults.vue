@@ -1,5 +1,5 @@
 <template>
-  <div class="analysis-results" :style="containerStyle">
+  <div class="analysis-results" :style="containerStyle" :data-theme="theme">
     <!-- 加载状态指示器 -->
     <div v-if="loading" class="loading-container">
       <div class="loading-spinner"></div>
@@ -1110,6 +1110,316 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// 自定义滚动条样式
+// 默认（深色chalk主题）滚动条样式
+.analysis-results {
+  // 主容器滚动条（8px宽度）
+  &::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: scaleY(1.1);
+    }
+    
+    &:active {
+      background: linear-gradient(135deg, #4e5bc7 0%, #5e3a7f 100%);
+    }
+  }
+  
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+// 数据表格滚动条（6px宽度）
+.data-table-section {
+  .table-content {
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #00bfff 0%, #0080ff 100%);
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #20cfff 0%, #2090ff 100%);
+        transform: scale(1.2);
+      }
+      
+      &:active {
+        background: linear-gradient(135deg, #009fdf 0%, #0060df 100%);
+      }
+    }
+    
+    &::-webkit-scrollbar-corner {
+      background: rgba(0, 191, 255, 0.1);
+    }
+  }
+  
+  // Element UI表格内部滚动条
+  /deep/ .el-table__body-wrapper {
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 191, 255, 0.1);
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #00bfff 0%, #0080ff 100%);
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #20cfff 0%, #2090ff 100%);
+      }
+      
+      &:active {
+        background: linear-gradient(135deg, #009fdf 0%, #0060df 100%);
+      }
+    }
+    
+    &::-webkit-scrollbar-corner {
+      background: rgba(0, 191, 255, 0.1);
+    }
+  }
+}
+
+// AI分析卡片滚动条（4px宽度）
+.ai-analysis-card {
+  .ai-card-content {
+    &::-webkit-scrollbar {
+      width: 4px;
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: scaleX(1.5);
+      }
+      
+      &:active {
+        background: linear-gradient(135deg, #4e5bc7 0%, #5e3a7f 100%);
+      }
+    }
+    
+    &::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+  }
+  
+  // AI结果内容区域
+  .ai-result-content {
+    &::-webkit-scrollbar {
+      width: 4px;
+      background: transparent;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(102, 126, 234, 0.1);
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      }
+      
+      &:active {
+        background: linear-gradient(135deg, #4e5bc7 0%, #5e3a7f 100%);
+      }
+    }
+  }
+}
+
+// 洞察卡片滚动条（4px宽度）
+.insights-grid {
+  .insight-card {
+    .insight-content {
+      &::-webkit-scrollbar {
+        width: 4px;
+        background: transparent;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 191, 255, 0.1);
+        border-radius: 2px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #00bfff 0%, #0080ff 100%);
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: linear-gradient(135deg, #20cfff 0%, #2090ff 100%);
+          transform: scaleX(1.5);
+        }
+        
+        &:active {
+          background: linear-gradient(135deg, #009fdf 0%, #0060df 100%);
+        }
+      }
+      
+      &::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+    }
+  }
+}
+
+// 浅色主题滚动条适配（vintage/westeros主题）
+.analysis-results[data-theme="vintage"],
+.analysis-results[data-theme="westeros"] {
+  // 主容器滚动条 - 浅色主题
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a0a0a0 0%, #707070 100%);
+    
+    &:hover {
+      background: linear-gradient(135deg, #909090 0%, #606060 100%);
+    }
+    
+    &:active {
+      background: linear-gradient(135deg, #808080 0%, #505050 100%);
+    }
+  }
+  
+  // 表格滚动条 - 浅色主题
+  .data-table-section {
+    .table-content {
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #999999 0%, #666666 100%);
+        
+        &:hover {
+          background: linear-gradient(135deg, #888888 0%, #555555 100%);
+        }
+        
+        &:active {
+          background: linear-gradient(135deg, #777777 0%, #444444 100%);
+        }
+      }
+      
+      &::-webkit-scrollbar-corner {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    /deep/ .el-table__body-wrapper {
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #999999 0%, #666666 100%);
+        
+        &:hover {
+          background: linear-gradient(135deg, #888888 0%, #555555 100%);
+        }
+        
+        &:active {
+          background: linear-gradient(135deg, #777777 0%, #444444 100%);
+        }
+      }
+      
+      &::-webkit-scrollbar-corner {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+  
+  // 洞察卡片滚动条 - 浅色主题
+  .insights-grid {
+    .insight-card {
+      .insight-content {
+        &::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #999999 0%, #666666 100%);
+          
+          &:hover {
+            background: linear-gradient(135deg, #888888 0%, #555555 100%);
+          }
+          
+          &:active {
+            background: linear-gradient(135deg, #777777 0%, #444444 100%);
+          }
+        }
+      }
+    }
+  }
+}
+
+// 火狐浏览器滚动条支持
+@-moz-document url-prefix() {
+  .analysis-results,
+  .data-table-section .table-content,
+  .ai-analysis-card .ai-card-content,
+  .insights-grid .insight-content {
+    scrollbar-width: thin;
+    scrollbar-color: #667eea rgba(255, 255, 255, 0.1);
+  }
+  
+  .analysis-results[data-theme="vintage"],
+  .analysis-results[data-theme="westeros"] {
+    scrollbar-color: #999999 rgba(0, 0, 0, 0.1);
+    
+    .data-table-section .table-content,
+    .insights-grid .insight-content {
+      scrollbar-color: #999999 rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
 // 全屏样式的定义
 .fullscreen {
   position: fixed !important;
@@ -1145,7 +1455,10 @@ export default {
   background-color: #0A1929;
   color: #fff;
   min-height: 100vh;
+  max-height: 100vh;
   box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .results-header {
